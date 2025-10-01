@@ -14,16 +14,250 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      artworks: {
+        Row: {
+          category: string
+          cover_url: string
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          featured: boolean | null
+          id: string
+          images: Json | null
+          slug: string
+          status: Database["public"]["Enums"]["content_status"] | null
+          tags: string[] | null
+          technique: string | null
+          title: string
+          updated_at: string | null
+          year: number | null
+        }
+        Insert: {
+          category: string
+          cover_url: string
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          featured?: boolean | null
+          id?: string
+          images?: Json | null
+          slug: string
+          status?: Database["public"]["Enums"]["content_status"] | null
+          tags?: string[] | null
+          technique?: string | null
+          title: string
+          updated_at?: string | null
+          year?: number | null
+        }
+        Update: {
+          category?: string
+          cover_url?: string
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          featured?: boolean | null
+          id?: string
+          images?: Json | null
+          slug?: string
+          status?: Database["public"]["Enums"]["content_status"] | null
+          tags?: string[] | null
+          technique?: string | null
+          title?: string
+          updated_at?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          message: string
+          name: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          message: string
+          name: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
+      exhibitions: {
+        Row: {
+          created_at: string | null
+          date: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          location: string | null
+          title: string
+          type: string | null
+          updated_at: string | null
+          year: number
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          location?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string | null
+          year: number
+        }
+        Update: {
+          created_at?: string | null
+          date?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          location?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
+      pages: {
+        Row: {
+          content: Json
+          created_at: string | null
+          id: string
+          locale: string | null
+          meta_description: string | null
+          meta_title: string | null
+          slug: string
+          status: Database["public"]["Enums"]["content_status"] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: Json
+          created_at?: string | null
+          id?: string
+          locale?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["content_status"] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          id?: string
+          locale?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["content_status"] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      settings: {
+        Row: {
+          description: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "editor" | "user"
+      content_status: "draft" | "published" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +384,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "editor", "user"],
+      content_status: ["draft", "published", "archived"],
+    },
   },
 } as const
