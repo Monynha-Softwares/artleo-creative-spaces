@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      translate: {
+        101: "101%",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -113,6 +116,10 @@ export default {
           "0%": { clipPath: "inset(0 100% 0 0)" },
           "100%": { clipPath: "inset(0 0 0 0)" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.3s ease-out",
@@ -123,6 +130,7 @@ export default {
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         float: "float 6s ease-in-out infinite",
         "reveal-text": "reveal-text 1.2s cubic-bezier(0.77, 0, 0.175, 1)",
+        marquee: "marquee 18s linear infinite",
       },
     },
   },
