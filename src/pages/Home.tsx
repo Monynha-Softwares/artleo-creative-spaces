@@ -11,21 +11,22 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative flex min-h-screen items-center overflow-hidden py-24 sm:py-32">
         <SilkBackground />
 
         {/* Content */}
-        <div className="relative z-10 container mx-auto px-4 text-center">
+        <div className="relative z-10 container mx-auto px-6 sm:px-8">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+            className="mx-auto flex max-w-3xl flex-col items-center text-center gap-6 sm:gap-8 sm:items-start sm:text-left"
           >
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 1 }}
-              className="mb-6"
+              className="w-auto"
             >
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 backdrop-blur-md border border-border/50 text-fluid-sm text-muted-foreground">
                 <Sparkles className="w-4 h-4 text-primary" />
@@ -33,26 +34,33 @@ const Home = () => {
               </span>
             </motion.div>
 
-            <SplitText
-              as="h1"
-              text={["Leonardo Silva", "Crafting Visual Stories"].join("\n")}
-              className="text-fluid-5xl font-bold mb-6 leading-tight"
-            />
+            <div className="w-full">
+              <SplitText
+                as="h1"
+                text={["Leonardo Silva", "Crafting Visual Stories"].join("\n")}
+                className="hidden sm:inline-flex text-fluid-5xl font-bold leading-[1.05] tracking-tight"
+              />
 
-            <p className="text-fluid-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
+              <h1 className="text-[2.25rem] font-bold leading-[1.1] tracking-tight sm:hidden">
+                <span className="block">Leonardo Silva</span>
+                <span className="block text-primary/90">Crafting Visual Stories</span>
+              </h1>
+            </div>
+
+            <p className="text-base sm:text-fluid-lg text-muted-foreground max-w-xl sm:max-w-2xl mx-auto sm:mx-0 mb-6 sm:mb-8 leading-relaxed">
               Exploring the intersection of art, technology, and emotion through
               immersive 3D experiences and motion design.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link to="/portfolio">
-                <Button variant="hero" size="lg" className="group">
+            <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start sm:gap-4">
+              <Link to="/portfolio" className="w-full sm:w-auto">
+                <Button variant="hero" size="lg" className="group w-full sm:w-auto">
                   Explore Portfolio
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/contact">
-                <Button variant="glass" size="lg">
+              <Link to="/contact" className="w-full sm:w-auto">
+                <Button variant="glass" size="lg" className="w-full sm:w-auto">
                   Get in Touch
                 </Button>
               </Link>
