@@ -2,6 +2,8 @@ import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Instagram, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import { TextType } from "@/components/reactbits/TextType";
+import { Stepper } from "@/components/reactbits/Stepper";
 
 const About = () => {
   const timeline = [
@@ -31,16 +33,15 @@ const About = () => {
           <SectionReveal delay={0.1}>
             <div className="space-y-6">
               <h2 className="text-fluid-3xl font-bold">Leonardo Silva</h2>
+              <TextType
+                text="I'm a digital artist and creative developer based in Brazil, specializing in motion design, 3D art, and interactive installations. My work explores the boundaries between the physical and digital, creating immersive experiences that invite viewers to question their perception of reality."
+                className="text-fluid-base text-muted-foreground leading-relaxed"
+                speed={35}
+              />
               <p className="text-fluid-base text-muted-foreground leading-relaxed">
-                I'm a digital artist and creative developer based in Brazil, specializing in 
-                motion design, 3D art, and interactive installations. My work explores the 
-                boundaries between the physical and digital, creating immersive experiences 
-                that invite viewers to question their perception of reality.
-              </p>
-              <p className="text-fluid-base text-muted-foreground leading-relaxed">
-                With a background in computer science and fine arts, I blend technical 
-                expertise with artistic vision to craft unique visual narratives. Each piece 
-                is an investigation into the relationship between form, color, movement, 
+                With a background in computer science and fine arts, I blend technical
+                expertise with artistic vision to craft unique visual narratives. Each piece
+                is an investigation into the relationship between form, color, movement,
                 and emotion in digital space.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
@@ -85,21 +86,14 @@ const About = () => {
             <h2 className="text-fluid-3xl font-bold mb-8 text-center">
               Exhibitions & <span className="bg-gradient-primary bg-clip-text text-transparent">Timeline</span>
             </h2>
-            <div className="space-y-6">
-              {timeline.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-6 p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-all"
-                >
-                  <div className="flex-shrink-0 w-20 h-20 rounded-full bg-gradient-primary flex items-center justify-center text-primary-foreground font-bold text-lg">
-                    {item.year}
-                  </div>
-                  <div className="flex-1 pt-3">
-                    <p className="text-fluid-lg font-medium">{item.event}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Stepper
+              steps={timeline.map((item) => ({
+                id: item.year,
+                title: item.year,
+                description: item.event,
+              }))}
+              className="mx-auto max-w-2xl"
+            />
           </div>
         </SectionReveal>
       </div>

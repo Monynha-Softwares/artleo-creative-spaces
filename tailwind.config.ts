@@ -113,6 +113,10 @@ export default {
           "0%": { clipPath: "inset(0 100% 0 0)" },
           "100%": { clipPath: "inset(0 0 0 0)" },
         },
+        "scroll-vertical": {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.3s ease-out",
@@ -123,6 +127,7 @@ export default {
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         float: "float 6s ease-in-out infinite",
         "reveal-text": "reveal-text 1.2s cubic-bezier(0.77, 0, 0.175, 1)",
+        "scroll-vertical": "scroll-vertical 12s linear infinite",
       },
     },
   },

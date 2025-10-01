@@ -5,6 +5,8 @@ import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
+import { PixelCard } from "@/components/reactbits/PixelCard";
+import { RollingGallery } from "@/components/reactbits/RollingGallery";
 
 // Mock data - will be replaced with Lovable Cloud data
 const artworks = [
@@ -85,6 +87,19 @@ const Portfolio = () => {
           </div>
         </SectionReveal>
 
+        <SectionReveal delay={0.05}>
+          <RollingGallery
+            items={artworks.slice(0, 4).map((artwork) => ({
+              id: artwork.slug,
+              image: artwork.coverUrl,
+              title: artwork.title,
+              subtitle: artwork.category,
+            }))}
+            className="mb-16"
+            speed={28}
+          />
+        </SectionReveal>
+
         {/* Filters */}
         <SectionReveal delay={0.1}>
           <div className="mb-12 space-y-6">
@@ -127,37 +142,18 @@ const Portfolio = () => {
             <motion.div
               key={artwork.id}
               layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
             >
               <Link to={`/art/${artwork.slug}`} className="group block">
-                <div className="relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-card">
-                  {/* Image */}
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img
-                      src={artwork.coverUrl}
-                      alt={artwork.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  </div>
-
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                    <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-primary/20 text-primary border border-primary/30 mb-2">
-                      {artwork.category}
-                    </span>
-                    <h3 className="text-fluid-xl font-bold text-foreground mb-1">
-                      {artwork.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">{artwork.year}</p>
-                  </div>
-                </div>
+                <PixelCard
+                  image={artwork.coverUrl}
+                  title={artwork.title}
+                  subtitle={artwork.category}
+                  footer={<span>{artwork.year}</span>}
+                />
               </Link>
             </motion.div>
           ))}

@@ -3,10 +3,13 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { InfiniteMenu } from "@/components/reactbits/InfiniteMenu";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const links = [
     { href: "/", label: "Home" },
@@ -18,7 +21,20 @@ export const Navigation = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/70 backdrop-blur-xl border-b border-border/60">
+      {!prefersReducedMotion && (
+        <svg className="pointer-events-none absolute h-0 w-0" aria-hidden>
+          <filter id="gooey-nav">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10"
+            />
+            <feBlend in="SourceGraphic" />
+          </filter>
+        </svg>
+      )}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -29,27 +45,33 @@ export const Navigation = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={`text-fluid-sm font-medium transition-colors relative ${
-                  isActive(link.href)
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {link.label}
-                {isActive(link.href) && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-primary"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-              </Link>
-            ))}
+          <div className="hidden md:flex items-center justify-center">
+            <div
+              className="relative flex items-center gap-2 rounded-full bg-background/30 px-3 py-1 shadow-[0_0_0_1px_rgba(99,102,241,0.15)] backdrop-blur-lg"
+              style={prefersReducedMotion ? undefined : { filter: "url(#gooey-nav)" }}
+            >
+              {links.map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className="relative overflow-hidden rounded-full px-4 py-2 text-fluid-sm font-medium text-foreground/80 transition-all"
+                  >
+                    {!prefersReducedMotion && active && (
+                      <motion.span
+                        layoutId="gooey-bubble"
+                        className="absolute inset-0 -z-10 rounded-full bg-primary/30 shadow-[0_0_0_1px_rgba(99,102,241,0.35)]"
+                        transition={{ type: "spring", stiffness: 260, damping: 24 }}
+                      />
+                    )}
+                    <span className={active ? "text-primary-foreground" : "hover:text-foreground transition-colors"}>
+                      {link.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -72,23 +94,10 @@ export const Navigation = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-card border-t border-border"
+            className="md:hidden bg-card/95 border-t border-border backdrop-blur-lg"
           >
-            <div className="container mx-auto px-4 py-4 space-y-3">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`block px-4 py-2 rounded-lg text-fluid-sm font-medium transition-colors ${
-                    isActive(link.href)
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+            <div className="container mx-auto px-4 py-4">
+              <InfiniteMenu items={links} onNavigate={() => setIsOpen(false)} />
             </div>
           </motion.div>
         )}

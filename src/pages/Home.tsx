@@ -1,21 +1,21 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Hero3D } from "@/components/Hero3D";
 import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowRight, Sparkles, Palette, Eye } from "lucide-react";
 import { motion } from "framer-motion";
+import { SilkBackground } from "@/components/reactbits/SilkBackground";
+import { SplitText } from "@/components/reactbits/SplitText";
+import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
 
 const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* 3D Background */}
-        <Hero3D />
-        
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-mesh" />
-        
+        {/* Silk Background with fallback */}
+        <SilkBackground className="opacity-90" color="#6f7cff" speed={4.5} noiseIntensity={1.1} rotation={0.3} />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background" />
+
         {/* Content */}
         <div className="relative z-10 container mx-auto px-4 text-center">
           <motion.div
@@ -35,12 +35,20 @@ const Home = () => {
               </span>
             </motion.div>
 
-            <h1 className="text-fluid-5xl font-bold mb-6 leading-tight">
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Leonardo Silva
-              </span>
-              <br />
-              <span className="text-foreground">Crafting Visual Stories</span>
+            <h1 className="text-fluid-5xl font-bold mb-6 leading-tight space-y-2">
+              <SplitText
+                as="span"
+                text="Leonardo Silva"
+                className="block bg-gradient-primary bg-clip-text text-transparent"
+                stagger={0.06}
+              />
+              <SplitText
+                as="span"
+                text="Crafting Visual Stories"
+                className="block text-foreground"
+                stagger={0.05}
+                delay={0.4}
+              />
             </h1>
 
             <p className="text-fluid-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
@@ -97,17 +105,24 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: Palette, title: "Motion Design", desc: "Dynamic visual narratives" },
-              { icon: Eye, title: "3D Art", desc: "Immersive spatial experiences" },
-              { icon: Sparkles, title: "Interactive", desc: "Engaging digital installations" },
+              {
+                icon: <Palette className="h-7 w-7" />,
+                title: "Motion Design",
+                desc: "Dynamic visual narratives",
+              },
+              {
+                icon: <Eye className="h-7 w-7" />,
+                title: "3D Art",
+                desc: "Immersive spatial experiences",
+              },
+              {
+                icon: <Sparkles className="h-7 w-7" />,
+                title: "Interactive",
+                desc: "Engaging digital installations",
+              },
             ].map((item, index) => (
-              <SectionReveal key={index} delay={index * 0.1}>
-                <div className="group relative p-8 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-card">
-                  <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity" />
-                  <item.icon className="w-12 h-12 text-primary mb-4" />
-                  <h3 className="text-fluid-xl font-bold mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.desc}</p>
-                </div>
+              <SectionReveal key={item.title} delay={index * 0.1}>
+                <SpotlightCard title={item.title} description={item.desc} icon={item.icon} />
               </SectionReveal>
             ))}
           </div>

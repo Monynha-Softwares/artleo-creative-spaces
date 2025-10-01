@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Instagram, Send } from "lucide-react";
+import { RippleGrid } from "@/components/reactbits/RippleGrid";
+import { GlassIcon } from "@/components/reactbits/GlassIcon";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -53,54 +55,42 @@ const Contact = () => {
           </div>
         </SectionReveal>
 
-        <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="relative max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 overflow-hidden rounded-3xl border border-border/60 bg-background/80 p-8">
+          <RippleGrid className="pointer-events-none absolute inset-0 opacity-80" color="rgba(99,102,241,0.18)" speed={5} />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-background/90 via-background/60 to-background" />
+
           {/* Contact Info */}
           <SectionReveal delay={0.1}>
-            <div className="space-y-8">
+            <div className="relative space-y-8">
               <div>
                 <h2 className="text-fluid-2xl font-bold mb-6">Let's Connect</h2>
                 <p className="text-muted-foreground leading-relaxed mb-6">
-                  Whether you're interested in collaborating, commissioning work, or just 
-                  want to chat about art and technology, feel free to reach out through 
+                  Whether you're interested in collaborating, commissioning work, or just
+                  want to chat about art and technology, feel free to reach out through
                   the form or my social channels.
                 </p>
               </div>
 
               <div className="space-y-4">
-                <a
+                <GlassIcon
+                  icon={<Mail className="h-6 w-6" />}
+                  title="Email"
+                  description="contact@artleo.com"
                   href="mailto:contact@artleo.com"
-                  className="flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Mail className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">contact@artleo.com</p>
-                  </div>
-                </a>
-
-                <a
+                />
+                <GlassIcon
+                  icon={<Instagram className="h-6 w-6" />}
+                  title="Instagram"
+                  description="@leonardossil"
                   href="https://www.instagram.com/leonardossil/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Instagram className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Instagram</p>
-                    <p className="text-sm text-muted-foreground">@leonardossil</p>
-                  </div>
-                </a>
+                />
               </div>
             </div>
           </SectionReveal>
 
           {/* Contact Form */}
           <SectionReveal delay={0.2}>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="relative space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
                 <Input
