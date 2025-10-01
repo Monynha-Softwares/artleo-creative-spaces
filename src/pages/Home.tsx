@@ -1,21 +1,19 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Hero3D } from "@/components/Hero3D";
 import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowRight, Sparkles, Palette, Eye } from "lucide-react";
 import { motion } from "framer-motion";
+import { SilkBackground } from "@/components/reactbits/SilkBackground";
+import { SplitText } from "@/components/reactbits/SplitText";
+import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
 
 const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* 3D Background */}
-        <Hero3D />
-        
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-mesh" />
-        
+        <SilkBackground />
+
         {/* Content */}
         <div className="relative z-10 container mx-auto px-4 text-center">
           <motion.div
@@ -35,13 +33,11 @@ const Home = () => {
               </span>
             </motion.div>
 
-            <h1 className="text-fluid-5xl font-bold mb-6 leading-tight">
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Leonardo Silva
-              </span>
-              <br />
-              <span className="text-foreground">Crafting Visual Stories</span>
-            </h1>
+            <SplitText
+              as="h1"
+              text={["Leonardo Silva", "Crafting Visual Stories"].join("\n")}
+              className="text-fluid-5xl font-bold mb-6 leading-tight"
+            />
 
             <p className="text-fluid-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
               Exploring the intersection of art, technology, and emotion through
@@ -102,12 +98,17 @@ const Home = () => {
               { icon: Sparkles, title: "Interactive", desc: "Engaging digital installations" },
             ].map((item, index) => (
               <SectionReveal key={index} delay={index * 0.1}>
-                <div className="group relative p-8 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-card">
-                  <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity" />
-                  <item.icon className="w-12 h-12 text-primary mb-4" />
-                  <h3 className="text-fluid-xl font-bold mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.desc}</p>
-                </div>
+                <SpotlightCard>
+                  <div className="flex flex-col gap-4 text-left">
+                    <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <item.icon className="w-7 h-7" />
+                    </div>
+                    <div>
+                      <h3 className="text-fluid-xl font-bold mb-1">{item.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+                    </div>
+                  </div>
+                </SpotlightCard>
               </SectionReveal>
             ))}
           </div>
