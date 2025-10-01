@@ -1,0 +1,94 @@
+.icon-btns {
+  display: grid;
+  gap: 1rem;
+}
+
+.icon-btn {
+  background-color: transparent;
+  outline: none;
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  perspective: 24em;
+  transform-style: preserve-3d;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-btn__back,
+.icon-btn__front,
+.icon-btn__label {
+  transition:
+    opacity 0.3s cubic-bezier(0.83, 0, 0.17, 1),
+    transform 0.3s cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.icon-btn__back,
+.icon-btn__front {
+  border-radius: 1.25em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.icon-btn__back {
+  box-shadow: 0.5em -0.5em 0.75em hsla(223, 10%, 10%, 0.12);
+  display: block;
+  transform: rotate(12deg);
+  transform-origin: 100% 100%;
+}
+
+.icon-btn__front {
+  background-color: hsla(0, 0%, 100%, 0.12);
+  box-shadow: 0 0 0 0.1em hsla(0, 0%, 100%, 0.3) inset;
+  backdrop-filter: blur(0.75em);
+  -webkit-backdrop-filter: blur(0.75em);
+  display: flex;
+  transform-origin: 80% 50%;
+}
+
+.icon-btn__icon {
+  margin: auto;
+  width: 1.5em;
+  height: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn__label {
+  font-size: 0.9em;
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.6;
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  transform: translateY(0);
+  color: var(--muted-foreground);
+}
+
+.icon-btn:focus-visible .icon-btn__back,
+.icon-btn:hover .icon-btn__back {
+  transform: rotate(20deg) translate3d(-0.4em, -0.4em, 0.4em);
+}
+
+.icon-btn:focus-visible .icon-btn__front,
+.icon-btn:hover .icon-btn__front {
+  transform: translateZ(1.5em);
+}
+
+.icon-btn:focus-visible .icon-btn__label,
+.icon-btn:hover .icon-btn__label {
+  opacity: 1;
+  transform: translateY(15%);
+}
+
+@media (min-width: 768px) {
+  .icon-btns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

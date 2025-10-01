@@ -6,6 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Instagram, Send } from "lucide-react";
+import { GlassIcons } from "@/components/reactbits/GlassIcons";
+import { RippleGrid } from "@/components/reactbits/RippleGrid";
+import { useReducedMotion } from "framer-motion";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -15,12 +18,12 @@ const Contact = () => {
     email: "",
     message: "",
   });
+  const prefersReducedMotion = useReducedMotion();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate submission - will be connected to Lovable Cloud
     setTimeout(() => {
       toast({
         title: "Message sent!",
@@ -39,9 +42,16 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-4">
-        {/* Header */}
+    <div className="min-h-screen pt-24 pb-16 relative overflow-hidden">
+      <RippleGrid
+        className="absolute inset-0"
+        gridColor="#6e55ff"
+        rippleIntensity={prefersReducedMotion ? 0 : 0.04}
+        glowIntensity={0.12}
+        opacity={0.85}
+        mouseInteraction={!prefersReducedMotion}
+      />
+      <div className="relative container mx-auto px-4">
         <SectionReveal>
           <div className="text-center mb-16">
             <h1 className="text-fluid-4xl font-bold mb-4">
@@ -53,52 +63,55 @@ const Contact = () => {
           </div>
         </SectionReveal>
 
-        <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Info */}
+        <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 rounded-3xl bg-background/80 backdrop-blur-xl border border-border/60 p-10">
           <SectionReveal delay={0.1}>
             <div className="space-y-8">
               <div>
                 <h2 className="text-fluid-2xl font-bold mb-6">Let's Connect</h2>
                 <p className="text-muted-foreground leading-relaxed mb-6">
-                  Whether you're interested in collaborating, commissioning work, or just 
-                  want to chat about art and technology, feel free to reach out through 
-                  the form or my social channels.
+                  Whether you're interested in collaborating, commissioning work, or just want to chat about art and technology,
+                  feel free to reach out through the form or my social channels.
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <a
-                  href="mailto:contact@artleo.com"
-                  className="flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Mail className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">contact@artleo.com</p>
-                  </div>
-                </a>
+              <GlassIcons
+                className="grid grid-cols-1 gap-4"
+                items={[
+                  {
+                    label: "Email",
+                    icon: <Mail className="w-5 h-5" />,
+                    color: "purple",
+                  },
+                  {
+                    label: "Instagram",
+                    icon: <Instagram className="w-5 h-5" />,
+                    color: "blue",
+                  },
+                ]}
+              />
 
-                <a
-                  href="https://www.instagram.com/leonardossil/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Instagram className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Instagram</p>
-                    <p className="text-sm text-muted-foreground">@leonardossil</p>
-                  </div>
-                </a>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <div>
+                  <span className="font-medium text-foreground">Email:</span>
+                  <a href="mailto:contact@artleo.com" className="ml-2 hover:text-primary transition">
+                    contact@artleo.com
+                  </a>
+                </div>
+                <div>
+                  <span className="font-medium text-foreground">Instagram:</span>
+                  <a
+                    href="https://www.instagram.com/leonardossil/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 hover:text-primary transition"
+                  >
+                    @leonardossil
+                  </a>
+                </div>
               </div>
             </div>
           </SectionReveal>
 
-          {/* Contact Form */}
           <SectionReveal delay={0.2}>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
@@ -111,7 +124,7 @@ const Contact = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Your name"
-                  className="bg-card border-border"
+                  className="bg-background/90 border-border"
                 />
               </div>
 
@@ -125,7 +138,7 @@ const Contact = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="your.email@example.com"
-                  className="bg-card border-border"
+                  className="bg-background/90 border-border"
                 />
               </div>
 
@@ -139,7 +152,7 @@ const Contact = () => {
                   onChange={handleChange}
                   placeholder="Tell me about your project or inquiry..."
                   rows={6}
-                  className="bg-card border-border resize-none"
+                  className="bg-background/90 border-border resize-none"
                 />
               </div>
 
