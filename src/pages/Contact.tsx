@@ -55,7 +55,7 @@ const Contact = () => {
           </div>
         </SectionReveal>
 
-        <div className="relative max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 rounded-[2.5rem] border border-border/60 bg-background/60 p-10 overflow-hidden">
+        <div className="relative max-w-4xl mx-auto rounded-[2.5rem] border border-border/60 bg-background/60 p-10 overflow-hidden">
           <RippleGridBackground />
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Info */}
