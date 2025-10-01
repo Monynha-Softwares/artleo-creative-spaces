@@ -1,68 +1,29 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
-
-// Mock data - will be replaced with Lovable Cloud data
-const artworks = [
-  {
-    id: 1,
-    slug: "motion-study-01",
-    title: "Motion Study 01",
-    category: "Motion Design",
-    year: 2024,
-    coverUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    slug: "abstract-forms",
-    title: "Abstract Forms",
-    category: "3D Art",
-    year: 2024,
-    coverUrl: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 3,
-    slug: "digital-sculpture",
-    title: "Digital Sculpture",
-    category: "3D Art",
-    year: 2023,
-    coverUrl: "https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    slug: "fluid-dynamics",
-    title: "Fluid Dynamics",
-    category: "Motion Design",
-    year: 2023,
-    coverUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 5,
-    slug: "neon-dreams",
-    title: "Neon Dreams",
-    category: "Interactive",
-    year: 2024,
-    coverUrl: "https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 6,
-    slug: "geometric-harmony",
-    title: "Geometric Harmony",
-    category: "3D Art",
-    year: 2023,
-    coverUrl: "https://images.unsplash.com/photo-1617791160505-6f00504e3519?w=800&auto=format&fit=crop",
-  },
-];
-
-const categories = ["All", "Motion Design", "3D Art", "Interactive"];
+import { useArtworks } from "@/hooks/useArtworks";
+import { PixelCard } from "@/components/reactbits/PixelCard";
+import { RollingGallery } from "@/components/reactbits/RollingGallery";
 
 const Portfolio = () => {
+  const { data: artworks = [], isLoading } = useArtworks();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const categories = useMemo(() => {
+    const base = new Set<string>(["All"]);
+    artworks.forEach((artwork) => base.add(artwork.category));
+    return Array.from(base);
+  }, [artworks]);
+
+  const featuredArtworks = useMemo(
+    () => artworks.filter((artwork) => artwork.featured).slice(0, 6),
+    [artworks],
+  );
 
   const filteredArtworks = artworks.filter((artwork) => {
     const matchesCategory = selectedCategory === "All" || artwork.category === selectedCategory;
@@ -84,6 +45,19 @@ const Portfolio = () => {
             </p>
           </div>
         </SectionReveal>
+
+        {featuredArtworks.length > 0 && (
+          <SectionReveal delay={0.05}>
+            <RollingGallery
+              items={featuredArtworks.map((artwork) => ({
+                imageUrl: artwork.cover_url,
+                title: artwork.title,
+                subtitle: `${artwork.category} • ${artwork.year}`,
+              }))}
+              className="mb-16"
+            />
+          </SectionReveal>
+        )}
 
         {/* Filters */}
         <SectionReveal delay={0.1}>
@@ -119,45 +93,22 @@ const Portfolio = () => {
         </SectionReveal>
 
         {/* Gallery Grid */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
+        <motion.div layout className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filteredArtworks.map((artwork, index) => (
             <motion.div
               key={artwork.id}
               layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: index * 0.05 }}
             >
-              <Link to={`/art/${artwork.slug}`} className="group block">
-                <div className="relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-card">
-                  {/* Image */}
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img
-                      src={artwork.coverUrl}
-                      alt={artwork.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  </div>
-
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                    <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-primary/20 text-primary border border-primary/30 mb-2">
-                      {artwork.category}
-                    </span>
-                    <h3 className="text-fluid-xl font-bold text-foreground mb-1">
-                      {artwork.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">{artwork.year}</p>
-                  </div>
-                </div>
+              <Link to={`/art/${artwork.slug}`} className="block">
+                <PixelCard
+                  imageUrl={artwork.cover_url}
+                  title={artwork.title}
+                  category={artwork.category}
+                  meta={String(artwork.year)}
+                />
               </Link>
             </motion.div>
           ))}
@@ -168,7 +119,9 @@ const Portfolio = () => {
           <SectionReveal>
             <div className="text-center py-16">
               <p className="text-fluid-lg text-muted-foreground">
-                No artworks found matching your criteria.
+                {isLoading
+                  ? "Loading artworks from Supabase..."
+                  : "No artworks found matching your criteria."}
               </p>
             </div>
           </SectionReveal>

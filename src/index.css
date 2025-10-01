@@ -67,3 +67,34 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes rb-roll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes rb-ripple {
+    from {
+      transform: scale(0.95);
+      opacity: 0.4;
+    }
+    to {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes rb-infinite-menu {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-50%);
+    }
+  }
+}
