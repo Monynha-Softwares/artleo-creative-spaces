@@ -67,3 +67,81 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes silk-blob {
+    0% {
+      transform: translate3d(-10%, -10%, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(10%, 10%, 0) scale(1.1);
+    }
+    100% {
+      transform: translate3d(-10%, -10%, 0) scale(1);
+    }
+  }
+
+  .animate-silk-blob {
+    animation: silk-blob 18s ease-in-out infinite;
+  }
+
+  @keyframes rolling-gallery {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-rolling-gallery {
+    animation: rolling-gallery var(--gallery-speed, 28s) linear infinite;
+    width: max-content;
+  }
+
+  @keyframes ripple-grid {
+    0% {
+      transform: scale(0.95);
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 0.85;
+    }
+    100% {
+      transform: scale(1.05);
+      opacity: 0.55;
+    }
+  }
+
+  .animate-ripple-grid {
+    animation: ripple-grid 16s ease-in-out infinite;
+  }
+
+  @keyframes infinite-horizontal {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes infinite-vertical {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  .animate-infinite-horizontal {
+    animation: infinite-horizontal 20s linear infinite;
+    width: max-content;
+  }
+
+  .animate-infinite-vertical {
+    animation: infinite-vertical 18s linear infinite;
+    height: max-content;
+  }
+}

@@ -5,6 +5,9 @@ import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
+import { PixelCard } from "@/components/react-bits/PixelCard";
+import { RollingGallery } from "@/components/react-bits/RollingGallery";
+import { InfiniteMenu } from "@/components/react-bits/InfiniteMenu";
 
 // Mock data - will be replaced with Lovable Cloud data
 const artworks = [
@@ -60,6 +63,8 @@ const artworks = [
 
 const categories = ["All", "Motion Design", "3D Art", "Interactive"];
 
+const featured = artworks.slice(0, 4);
+
 const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,7 +92,7 @@ const Portfolio = () => {
 
         {/* Filters */}
         <SectionReveal delay={0.1}>
-          <div className="mb-12 space-y-6">
+          <div className="mb-12 space-y-8">
             {/* Search */}
             <div className="relative max-w-md mx-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -101,21 +106,30 @@ const Portfolio = () => {
             </div>
 
             {/* Categories */}
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Filter className="w-5 h-5 text-muted-foreground" />
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category)}
-                  className="transition-all"
-                >
-                  {category}
-                </Button>
-              ))}
+            <div className="space-y-3">
+              <div className="flex items-center justify-center gap-3 text-muted-foreground">
+                <Filter className="w-5 h-5" />
+                <span className="text-sm uppercase tracking-[0.3em]">Browse</span>
+              </div>
+              <InfiniteMenu
+                items={categories.map((category) => ({ label: category, value: category }))}
+                activeValue={selectedCategory}
+                onSelect={setSelectedCategory}
+              />
             </div>
           </div>
+        </SectionReveal>
+
+        <SectionReveal delay={0.15}>
+          <RollingGallery
+            items={featured.map((item) => ({
+              id: item.id,
+              title: item.title,
+              imageUrl: item.coverUrl,
+              category: item.category,
+            }))}
+            className="mb-16"
+          />
         </SectionReveal>
 
         {/* Gallery Grid */}
@@ -133,31 +147,12 @@ const Portfolio = () => {
               transition={{ duration: 0.3, delay: index * 0.05 }}
             >
               <Link to={`/art/${artwork.slug}`} className="group block">
-                <div className="relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-card">
-                  {/* Image */}
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img
-                      src={artwork.coverUrl}
-                      alt={artwork.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      loading="lazy"
-                    />
+                <PixelCard imageUrl={artwork.coverUrl} title={artwork.title} meta={`${artwork.category} • ${artwork.year}`}>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>View details</span>
+                    <span>↗</span>
                   </div>
-
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                    <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-primary/20 text-primary border border-primary/30 mb-2">
-                      {artwork.category}
-                    </span>
-                    <h3 className="text-fluid-xl font-bold text-foreground mb-1">
-                      {artwork.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">{artwork.year}</p>
-                  </div>
-                </div>
+                </PixelCard>
               </Link>
             </motion.div>
           ))}

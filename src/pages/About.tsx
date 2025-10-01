@@ -2,13 +2,15 @@ import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Instagram, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import { TextType } from "@/components/react-bits/TextType";
+import { StepperTimeline } from "@/components/react-bits/StepperTimeline";
 
 const About = () => {
   const timeline = [
-    { year: "2024", event: "Solo Exhibition - Digital Futures Gallery" },
-    { year: "2023", event: "Group Show - Contemporary Digital Art Collective" },
-    { year: "2023", event: "Artist Residency - Motion Lab Studio" },
-    { year: "2022", event: "Award - Best Interactive Installation" },
+    { year: "2024", title: "Solo Exhibition", subtitle: "Digital Futures Gallery" },
+    { year: "2023", title: "Group Show", subtitle: "Contemporary Digital Art Collective" },
+    { year: "2023", title: "Artist Residency", subtitle: "Motion Lab Studio" },
+    { year: "2022", title: "Best Interactive Installation", subtitle: "Immersive Arts Awards" },
   ];
 
   return (
@@ -31,17 +33,16 @@ const About = () => {
           <SectionReveal delay={0.1}>
             <div className="space-y-6">
               <h2 className="text-fluid-3xl font-bold">Leonardo Silva</h2>
+              <TextType
+                text={
+                  "I'm a digital artist and creative developer based in Brazil, specializing in motion design, 3D art, and interactive installations. My work explores the boundaries between the physical and digital, creating immersive experiences that invite viewers to question their perception of reality."
+                }
+                className="text-fluid-base"
+              />
               <p className="text-fluid-base text-muted-foreground leading-relaxed">
-                I'm a digital artist and creative developer based in Brazil, specializing in 
-                motion design, 3D art, and interactive installations. My work explores the 
-                boundaries between the physical and digital, creating immersive experiences 
-                that invite viewers to question their perception of reality.
-              </p>
-              <p className="text-fluid-base text-muted-foreground leading-relaxed">
-                With a background in computer science and fine arts, I blend technical 
-                expertise with artistic vision to craft unique visual narratives. Each piece 
-                is an investigation into the relationship between form, color, movement, 
-                and emotion in digital space.
+                With a background in computer science and fine arts, I blend technical expertise with artistic vision to craft
+                unique visual narratives. Each piece is an investigation into the relationship between form, color, movement, and
+                emotion in digital space.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <a
@@ -85,21 +86,7 @@ const About = () => {
             <h2 className="text-fluid-3xl font-bold mb-8 text-center">
               Exhibitions & <span className="bg-gradient-primary bg-clip-text text-transparent">Timeline</span>
             </h2>
-            <div className="space-y-6">
-              {timeline.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-6 p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-all"
-                >
-                  <div className="flex-shrink-0 w-20 h-20 rounded-full bg-gradient-primary flex items-center justify-center text-primary-foreground font-bold text-lg">
-                    {item.year}
-                  </div>
-                  <div className="flex-1 pt-3">
-                    <p className="text-fluid-lg font-medium">{item.event}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <StepperTimeline items={timeline} />
           </div>
         </SectionReveal>
       </div>

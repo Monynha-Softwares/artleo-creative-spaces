@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Instagram, Send } from "lucide-react";
+import { RippleGridBackground } from "@/components/react-bits/RippleGridBackground";
+import { GlassIcon } from "@/components/react-bits/GlassIcon";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -39,8 +41,9 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-16 overflow-hidden">
+      <RippleGridBackground />
+      <div className="container relative z-10 mx-auto px-4">
         {/* Header */}
         <SectionReveal>
           <div className="text-center mb-16">
@@ -60,40 +63,24 @@ const Contact = () => {
               <div>
                 <h2 className="text-fluid-2xl font-bold mb-6">Let's Connect</h2>
                 <p className="text-muted-foreground leading-relaxed mb-6">
-                  Whether you're interested in collaborating, commissioning work, or just 
-                  want to chat about art and technology, feel free to reach out through 
-                  the form or my social channels.
+                  Whether you're interested in collaborating, commissioning work, or just want to chat about art and technology,
+                  feel free to reach out through the form or my social channels.
                 </p>
               </div>
 
               <div className="space-y-4">
-                <a
+                <GlassIcon
+                  icon={Mail}
+                  title="Email"
+                  description="contact@artleo.com"
                   href="mailto:contact@artleo.com"
-                  className="flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Mail className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">contact@artleo.com</p>
-                  </div>
-                </a>
-
-                <a
+                />
+                <GlassIcon
+                  icon={Instagram}
+                  title="Instagram"
+                  description="@leonardossil"
                   href="https://www.instagram.com/leonardossil/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Instagram className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Instagram</p>
-                    <p className="text-sm text-muted-foreground">@leonardossil</p>
-                  </div>
-                </a>
+                />
               </div>
             </div>
           </SectionReveal>
