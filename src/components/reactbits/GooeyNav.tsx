@@ -3,13 +3,29 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { InfiniteMenu } from "./InfiniteMenu";
+import { FlowingMenu } from "./FlowingMenu";
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  {
+    href: "/",
+    label: "Home",
+    accent: "linear-gradient(135deg, rgba(168, 85, 247, 0.7), rgba(99, 102, 241, 0.7))",
+  },
+  {
+    href: "/portfolio",
+    label: "Portfolio",
+    accent: "linear-gradient(135deg, rgba(14, 165, 233, 0.7), rgba(236, 72, 153, 0.7))",
+  },
+  {
+    href: "/about",
+    label: "About",
+    accent: "linear-gradient(135deg, rgba(34, 197, 94, 0.7), rgba(147, 51, 234, 0.7))",
+  },
+  {
+    href: "/contact",
+    label: "Contact",
+    accent: "linear-gradient(135deg, rgba(251, 191, 36, 0.7), rgba(59, 130, 246, 0.7))",
+  },
 ];
 
 export const GooeyNav = () => {
@@ -68,7 +84,11 @@ export const GooeyNav = () => {
               transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.21, 1, 0.29, 1] }}
               className="md:hidden mt-4"
             >
-              <InfiniteMenu items={links} onItemClick={() => setOpen(false)} speed={18} />
+              <FlowingMenu
+                items={links}
+                activeHref={location.pathname}
+                onItemClick={() => setOpen(false)}
+              />
             </motion.div>
           )}
         </AnimatePresence>
