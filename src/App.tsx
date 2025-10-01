@@ -22,6 +22,7 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <Navigation />
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/portfolio" element={<Portfolio />} />
