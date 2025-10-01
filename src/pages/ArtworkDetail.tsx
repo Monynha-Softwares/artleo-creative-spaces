@@ -22,9 +22,9 @@ const ArtworkDetail = () => {
 
   if (!artwork) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center">
+      <div className="min-h-screen overflow-x-hidden pt-24 flex items-center justify-center px-4">
         <div className="text-center">
-          <h1 className="text-fluid-3xl font-bold mb-4">Artwork Not Found</h1>
+          <h1 className="mb-4 text-[clamp(1.75rem,6vw,2.75rem)] font-bold leading-tight">Artwork Not Found</h1>
           <Link to="/portfolio">
             <Button variant="outline">
               <ArrowLeft className="w-5 h-5 mr-2" />
@@ -37,8 +37,8 @@ const ArtworkDetail = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         {/* Back Button */}
         <SectionReveal>
           <Link to="/portfolio">
@@ -49,10 +49,10 @@ const ArtworkDetail = () => {
           </Link>
         </SectionReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-12">
           {/* Image */}
           <SectionReveal>
-            <div className="sticky top-24">
+            <div className="lg:sticky lg:top-24">
               <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-card border border-border shadow-card">
                 <img
                   src={artwork.coverUrl}
@@ -67,10 +67,10 @@ const ArtworkDetail = () => {
           <div className="space-y-8">
             <SectionReveal delay={0.1}>
               <div>
-                <h1 className="text-fluid-4xl font-bold mb-4">
+                <h1 className="mb-4 text-[clamp(1.85rem,6vw,3.25rem)] font-bold leading-tight text-balance">
                   {artwork.title}
                 </h1>
-                <p className="text-fluid-lg text-muted-foreground leading-relaxed">
+                <p className="text-[clamp(1rem,3.4vw,1.15rem)] text-muted-foreground leading-relaxed">
                   {artwork.description}
                 </p>
               </div>
@@ -80,21 +80,21 @@ const ArtworkDetail = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Calendar className="w-5 h-5 text-primary" />
-                  <span className="text-fluid-base">
+                  <span className="text-[clamp(0.95rem,3.2vw,1.1rem)]">
                     <strong className="text-foreground">Year:</strong> {artwork.year}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Tag className="w-5 h-5 text-primary" />
-                  <span className="text-fluid-base">
+                  <span className="text-[clamp(0.95rem,3.2vw,1.1rem)]">
                     <strong className="text-foreground">Category:</strong> {artwork.category}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Layers className="w-5 h-5 text-primary" />
-                  <span className="text-fluid-base">
+                  <span className="text-[clamp(0.95rem,3.2vw,1.1rem)]">
                     <strong className="text-foreground">Technique:</strong> {artwork.technique}
                   </span>
                 </div>
@@ -103,7 +103,7 @@ const ArtworkDetail = () => {
 
             <SectionReveal delay={0.3}>
               <div>
-                <h3 className="text-fluid-xl font-bold mb-3">Tags</h3>
+                <h3 className="mb-3 text-[clamp(1.2rem,4vw,1.6rem)] font-bold leading-tight">Tags</h3>
                 <div className="flex flex-wrap gap-2">
                   {artwork.tags.map((tag: string) => (
                     <span

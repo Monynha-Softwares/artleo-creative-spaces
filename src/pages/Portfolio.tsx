@@ -75,15 +75,15 @@ const Portfolio = () => {
   const featured = artworks.slice(0, 4);
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-4 space-y-16">
+    <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-4 sm:px-6">
         {/* Header */}
         <SectionReveal>
-          <div className="text-center mb-12">
-            <h1 className="text-fluid-4xl font-bold mb-4">
+          <div className="mb-10 text-center">
+            <h1 className="mb-4 text-[clamp(2rem,7vw,3.5rem)] font-bold leading-tight text-balance">
               <span className="bg-gradient-primary bg-clip-text text-transparent">Portfolio</span>
             </h1>
-            <p className="text-fluid-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-[clamp(1rem,3.4vw,1.15rem)] text-muted-foreground leading-relaxed text-balance">
               A collection of explorations in digital art, motion, and 3D design
             </p>
           </div>
@@ -105,29 +105,29 @@ const Portfolio = () => {
 
         {/* Filters */}
         <SectionReveal delay={0.1}>
-          <div className="mb-12 space-y-6">
+          <div className="mb-10 space-y-6">
             {/* Search */}
             <div className="relative max-w-md mx-auto">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search artworks..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-card border-border"
+                className="h-12 rounded-full border-border bg-card pl-10"
               />
             </div>
 
             {/* Categories */}
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Filter className="w-5 h-5 text-muted-foreground" />
+              <Filter className="h-5 w-5 text-muted-foreground" />
               {categories.map((category) => (
                 <Button
                   key={category}
                   variant={selectedCategory === category ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSelectedCategory(category)}
-                  className="transition-all"
+                  className="transition-all motion-reduce:transition-none"
                 >
                   {category}
                 </Button>
@@ -139,7 +139,7 @@ const Portfolio = () => {
         {/* Gallery Grid */}
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3"
         >
           {filteredArtworks.map((artwork, index) => (
             <motion.div
