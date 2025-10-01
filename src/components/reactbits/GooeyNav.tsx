@@ -36,18 +36,24 @@ export const GooeyNav = () => {
   const isActive = (href: string) => location.pathname === href;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 mx-auto flex max-w-5xl items-center justify-center px-4 pt-6">
-      <nav className="relative w-full rounded-full border border-border/70 bg-background/70 p-2 backdrop-blur-xl">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 px-4 py-2">
-            <span className="text-fluid-lg font-semibold text-foreground">Art Leo</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-4">
-            {links.map((link) => (
-              <motion.div key={link.href} className="relative">
-                <Link
-                  to={link.href}
-                  className={cn(
+    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6">
+      <nav
+        className="mx-auto flex w-full max-w-5xl items-center justify-between gap-2 rounded-full border border-border/70 bg-background/70 px-4 py-2 backdrop-blur-xl motion-reduce:transition-none min-h-[3.5rem]"
+      >
+        <Link
+          to="/"
+          className="flex min-w-0 items-center gap-2 py-2"
+        >
+          <span className="whitespace-nowrap text-[clamp(1.1rem,4vw,1.5rem)] font-semibold text-foreground">
+            Art Leo
+          </span>
+        </Link>
+        <div className="hidden items-center gap-4 md:flex">
+          {links.map((link) => (
+            <motion.div key={link.href} className="relative">
+              <Link
+                to={link.href}
+                className={cn(
                     "relative inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition-colors",
                     isActive(link.href)
                       ? "text-primary"
@@ -66,14 +72,14 @@ export const GooeyNav = () => {
               </motion.div>
             ))}
           </div>
-          <button
-            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-card/70 text-foreground"
-            onClick={() => setOpen((prev) => !prev)}
-            aria-label="Toggle navigation"
-          >
+        <button
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-card/70 p-2 text-foreground motion-reduce:transition-none md:hidden"
+          onClick={() => setOpen((prev) => !prev)}
+          aria-label="Toggle navigation"
+          aria-expanded={open}
+        >
             {open ? <X /> : <Menu />}
-          </button>
-        </div>
+        </button>
 
         <AnimatePresence>
           {open && (
@@ -82,7 +88,7 @@ export const GooeyNav = () => {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.21, 1, 0.29, 1] }}
-              className="md:hidden mt-4"
+              className="mt-3 w-full md:hidden"
             >
               <FlowingMenu
                 items={links}
