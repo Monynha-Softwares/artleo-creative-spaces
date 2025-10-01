@@ -1,0 +1,157 @@
+.rb-infinite-menu {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  border: 1px solid hsl(255 30% 60% / 0.2);
+  background:
+    radial-gradient(circle at 50% 10%, hsl(258 89% 66% / 0.32), transparent 65%),
+    radial-gradient(circle at 50% 120%, hsl(216 94% 70% / 0.2), transparent 70%),
+    rgba(12, 12, 18, 0.9);
+  overflow: hidden;
+  isolation: isolate;
+  --rb-radius: clamp(120px, 35vw, 210px);
+}
+
+.rb-infinite-menu__ring {
+  position: relative;
+  width: min(22rem, 88%);
+  height: min(22rem, 88%);
+  transform-style: preserve-3d;
+  animation: rb-infinite-menu-spin var(--rb-rotation-duration, 18s) linear infinite;
+}
+
+.rb-infinite-menu__item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10.5rem;
+  padding: 1rem;
+  border-radius: 1.25rem;
+  border: 1px solid hsl(260 60% 70% / 0.12);
+  background: linear-gradient(145deg, hsl(245 75% 18% / 0.9), hsl(265 70% 32% / 0.85));
+  box-shadow: 0 16px 40px hsl(255 90% 40% / 0.25);
+  color: hsl(250 100% 95%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transform: rotateY(calc(var(--rb-item-index) * var(--rb-angle-step))) translateZ(var(--rb-radius))
+    rotateY(calc(var(--rb-item-index) * -1 * var(--rb-angle-step)));
+  transform-origin: center;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rb-infinite-menu__item:hover,
+.rb-infinite-menu__item:focus-visible {
+  outline: none;
+  border-color: hsl(258 100% 85% / 0.7);
+  box-shadow: 0 20px 50px hsl(258 100% 70% / 0.4);
+}
+
+.rb-infinite-menu__item--active {
+  border-color: hsl(258 100% 80%);
+  box-shadow: 0 24px 60px hsl(258 100% 72% / 0.65);
+}
+
+.rb-infinite-menu__media {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: hsl(258 90% 60% / 0.25);
+  display: grid;
+  place-items: center;
+}
+
+.rb-infinite-menu__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rb-infinite-menu__caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rb-infinite-menu__title {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.rb-infinite-menu__description {
+  font-size: 0.75rem;
+  color: hsl(245 40% 85%);
+  line-height: 1.25;
+}
+
+.rb-infinite-menu__halo {
+  position: absolute;
+  inset: auto 10% 6%;
+  height: 30%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsl(258 100% 70% / 0.6), transparent 60%);
+  filter: blur(40px);
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.rb-infinite-menu__fallback {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 1.25rem;
+  border: 1px solid hsl(255 30% 60% / 0.18);
+  background: linear-gradient(160deg, rgba(20, 20, 32, 0.92), rgba(44, 33, 70, 0.85));
+  width: 100%;
+}
+
+.rb-infinite-menu__fallback-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid hsl(260 35% 55% / 0.18);
+  background: rgba(26, 22, 45, 0.8);
+  color: hsl(245 60% 92%);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  text-align: left;
+}
+
+.rb-infinite-menu__fallback-item:hover,
+.rb-infinite-menu__fallback-item:focus-visible {
+  outline: none;
+  border-color: hsl(258 100% 75% / 0.6);
+  transform: translateY(-2px);
+}
+
+.rb-infinite-menu__fallback-item--active {
+  border-color: hsl(258 100% 75%);
+  background: rgba(55, 32, 90, 0.85);
+}
+
+@keyframes rb-infinite-menu-spin {
+  from {
+    transform: rotateX(15deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(15deg) rotateY(-360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rb-infinite-menu__ring {
+    animation: none;
+  }
+}

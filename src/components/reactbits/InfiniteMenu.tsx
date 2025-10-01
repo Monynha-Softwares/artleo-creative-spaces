@@ -1,73 +1,98 @@
-import { motion, useReducedMotion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { Link, useLocation } from "react-router-dom";
+import { useReducedMotion } from "framer-motion";
+import type { CSSProperties } from "react";
+import { useLocation } from "react-router-dom";
 
-interface InfiniteMenuProps {
-  items: { label: string; href: string }[];
-  speed?: number;
-  onItemClick?: () => void;
+import { cn } from "@/lib/utils";
+
+import "./InfiniteMenu.css";
+
+export interface InfiniteMenuItem {
+  image: string;
+  link: string;
+  title: string;
+  description?: string;
 }
 
-export const InfiniteMenu = ({ items, speed = 16, onItemClick }: InfiniteMenuProps) => {
+interface InfiniteMenuProps {
+  items: InfiniteMenuItem[];
+  speed?: number;
+  onItemClick?: (item: InfiniteMenuItem) => void;
+}
+
+export const InfiniteMenu = ({ items, speed = 18, onItemClick }: InfiniteMenuProps) => {
   const reduceMotion = useReducedMotion();
   const location = useLocation();
-  const duplicated = [...items, ...items];
 
-  const content = duplicated.map((item, index) => {
-    const active = location.pathname === item.href;
-    return (
-      <Link
-        key={`${item.href}-${index}`}
-        to={item.href}
-        onClick={onItemClick}
-        className={cn(
-          "inline-flex min-w-[140px] items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium transition-colors",
-          active
-            ? "border-transparent bg-primary text-primary-foreground shadow-lg"
-            : "border-border/70 bg-card/60 text-muted-foreground hover:border-primary/40 hover:text-foreground",
-        )}
-      >
-        {item.label}
-      </Link>
-    );
-  });
+  if (!items.length) {
+    return null;
+  }
 
   if (reduceMotion) {
     return (
-      <div className="flex flex-wrap gap-3">
+      <ul className="rb-infinite-menu__fallback" data-testid="reactbits-infinite-menu-fallback">
         {items.map((item) => {
-          const active = location.pathname === item.href;
+          const isActive = location.pathname === item.link;
           return (
-            <Link
-              key={item.href}
-              to={item.href}
-              onClick={onItemClick}
-              className={cn(
-                "inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium transition-colors",
-                active
-                  ? "border-transparent bg-primary text-primary-foreground shadow-lg"
-                  : "border-border/70 bg-card/60 text-muted-foreground hover:border-primary/40 hover:text-foreground",
-              )}
-            >
-              {item.label}
-            </Link>
+            <li key={item.link}>
+              <button
+                type="button"
+                onClick={() => onItemClick?.(item)}
+                className={cn(
+                  "rb-infinite-menu__fallback-item",
+                  isActive && "rb-infinite-menu__fallback-item--active",
+                )}
+                aria-label={`Navigate to ${item.title}`}
+              >
+                <span className="rb-infinite-menu__media" aria-hidden="true">
+                  <img src={item.image} alt="" />
+                </span>
+                <span className="rb-infinite-menu__caption">
+                  <span className="rb-infinite-menu__title">{item.title}</span>
+                  {item.description ? (
+                    <span className="rb-infinite-menu__description">{item.description}</span>
+                  ) : null}
+                </span>
+              </button>
+            </li>
           );
         })}
-      </div>
+      </ul>
     );
   }
 
+  const styles = {
+    "--rb-angle-step": `${360 / items.length}deg`,
+    "--rb-rotation-duration": `${speed}s`,
+  } as CSSProperties;
+
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-background/80 py-4">
-      <motion.div
-        className="flex gap-3"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ repeat: Infinity, repeatType: "loop", duration: speed, ease: "linear" }}
-      >
-        {content}
-      </motion.div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
+    <div className="rb-infinite-menu" style={styles} data-testid="reactbits-infinite-menu">
+      <div className="rb-infinite-menu__ring">
+        {items.map((item, index) => {
+          const isActive = location.pathname === item.link;
+          return (
+            <button
+              key={item.link}
+              type="button"
+              className={cn("rb-infinite-menu__item", isActive && "rb-infinite-menu__item--active")}
+              style={{ "--rb-item-index": index } as CSSProperties}
+              onClick={() => onItemClick?.(item)}
+              aria-label={`Navigate to ${item.title}`}
+            >
+              <span className="rb-infinite-menu__media" aria-hidden="true">
+                <img src={item.image} alt="" />
+              </span>
+              <span className="rb-infinite-menu__caption">
+                <span className="rb-infinite-menu__title">{item.title}</span>
+                {item.description ? (
+                  <span className="rb-infinite-menu__description">{item.description}</span>
+                ) : null}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="rb-infinite-menu__halo" aria-hidden="true" />
     </div>
   );
 };

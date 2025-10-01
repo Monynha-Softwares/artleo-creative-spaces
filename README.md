@@ -71,3 +71,23 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Mobile navigation
+
+The mobile experience now uses the [React Bits Infinite Menu](https://reactbits.dev/docs/components/infinite-menu) component. The configuration lives in `src/components/MobileInfiniteMenu.tsx` where `mobileNavigationItems` defines each item (`image`, `link`, `title`, `description`). Update this array to add or remove destinations and keep the icon assets in `public/images`.
+
+When `prefers-reduced-motion` is detected the component swaps the 3D ring for an accessible vertical list of buttons, ensuring users can still navigate comfortably.
+
+## Testing
+
+Run the component unit tests with Vitest and React Testing Library:
+
+```bash
+npm run test
+```
+
+End-to-end checks powered by Playwright cover the desktop and mobile navigation behaviours:
+
+```bash
+npm run test:e2e
+```
