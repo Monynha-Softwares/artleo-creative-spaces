@@ -7,6 +7,12 @@ import { SilkBackground } from "@/components/reactbits/SilkBackground";
 import { SplitText } from "@/components/reactbits/SplitText";
 import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
 
+const FEATURED_DISCIPLINES = [
+  { icon: Palette, title: "Motion Design", desc: "Dynamic visual narratives" },
+  { icon: Eye, title: "3D Art", desc: "Immersive spatial experiences" },
+  { icon: Sparkles, title: "Interactive", desc: "Engaging digital installations" },
+] as const;
+
 const Home = () => {
   return (
     <div className="min-h-screen overflow-x-hidden">
@@ -93,11 +99,7 @@ const Home = () => {
           </SectionReveal>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {[
-              { icon: Palette, title: "Motion Design", desc: "Dynamic visual narratives" },
-              { icon: Eye, title: "3D Art", desc: "Immersive spatial experiences" },
-              { icon: Sparkles, title: "Interactive", desc: "Engaging digital installations" },
-            ].map((item, index) => (
+            {FEATURED_DISCIPLINES.map((item, index) => (
               <SectionReveal key={index} delay={index * 0.1}>
                 <SpotlightCard className="p-6 sm:p-8">
                   <div className="flex flex-col gap-3 text-left sm:gap-4">
