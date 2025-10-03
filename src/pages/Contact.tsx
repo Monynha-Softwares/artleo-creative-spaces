@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,36 +9,64 @@ import { Mail, Instagram, Send } from "lucide-react";
 import { GlassIcon } from "@/components/reactbits/GlassIcon";
 import { RippleGridBackground } from "@/components/reactbits/RippleGridBackground";
 
+const initialFormState = {
+  name: "",
+  email: "",
+  message: "",
+};
+
+type ContactFormState = typeof initialFormState;
+
 const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState<ContactFormState>(initialFormState);
+  const pendingTimeoutRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
+
+  const resetForm = useCallback(() => {
+    setFormData(() => ({ ...initialFormState }));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate submission - will be connected to Lovable Cloud
-    setTimeout(() => {
-      toast({
-        title: "Message sent!",
-        description: "Thank you for reaching out. I'll get back to you soon.",
+    const simulateSubmission = () =>
+      new Promise<void>((resolve) => {
+        pendingTimeoutRef.current = window.setTimeout(resolve, 1000);
       });
-      setFormData({ name: "", email: "", message: "" });
-      setIsSubmitting(false);
-    }, 1000);
+
+    await simulateSubmission();
+    pendingTimeoutRef.current = null;
+
+    toast({
+      title: "Message sent!",
+      description: "Thank you for reaching out. I'll get back to you soon.",
+    });
+
+    resetForm();
+    setIsSubmitting(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    },
+    [],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (pendingTimeoutRef.current) {
+        window.clearTimeout(pendingTimeoutRef.current);
+        pendingTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div className="min-h-screen overflow-x-hidden pt-24 pb-16">

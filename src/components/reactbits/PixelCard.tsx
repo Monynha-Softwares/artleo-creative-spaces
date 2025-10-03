@@ -8,7 +8,6 @@ interface PixelCardProps {
   subtitle?: string;
   footer?: ReactNode;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
   noFocus?: boolean;
 }
 
@@ -18,14 +17,12 @@ export const PixelCard = ({
   subtitle,
   footer,
   className,
-  as = "div",
   noFocus,
 }: PixelCardProps) => {
   const reduceMotion = useReducedMotion();
-  const Component = as as any;
 
   return (
-    <Component
+    <div
       className={cn(
         "group relative block overflow-hidden rounded-2xl border border-border/80 bg-card/70 backdrop-blur-xl",
         "transition-all duration-500 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_25px_45px_-20px_rgba(76,0,130,0.35)]",
@@ -64,7 +61,7 @@ export const PixelCard = ({
         </div>
         {footer && <div className="text-muted-foreground">{footer}</div>}
       </div>
-    </Component>
+    </div>
   );
 };
 

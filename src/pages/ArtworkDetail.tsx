@@ -4,7 +4,17 @@ import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowLeft, Calendar, Tag, Layers } from "lucide-react";
 
 // Mock data - will be replaced with Lovable Cloud data
-const artworkData: Record<string, any> = {
+type ArtworkDetailData = {
+  title: string;
+  year: number;
+  category: "Motion Design" | "3D Art" | "Interactive";
+  technique: string;
+  description: string;
+  coverUrl: string;
+  tags: string[];
+};
+
+const artworkData: Record<string, ArtworkDetailData> = {
   "motion-study-01": {
     title: "Motion Study 01",
     year: 2024,

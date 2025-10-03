@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { SectionReveal } from "@/components/SectionReveal";
@@ -9,7 +9,16 @@ import { RollingGallery } from "@/components/reactbits/RollingGallery";
 import { PixelCard } from "@/components/reactbits/PixelCard";
 
 // Mock data - will be replaced with Lovable Cloud data
-const artworks = [
+type Artwork = {
+  id: number;
+  slug: string;
+  title: string;
+  category: "Motion Design" | "3D Art" | "Interactive";
+  year: number;
+  coverUrl: string;
+};
+
+const artworks: Artwork[] = [
   {
     id: 1,
     slug: "motion-study-01",
@@ -60,19 +69,23 @@ const artworks = [
   },
 ];
 
-const categories = ["All", "Motion Design", "3D Art", "Interactive"];
+const categories = ["All", "Motion Design", "3D Art", "Interactive"] as const;
+
+type CategoryFilter = (typeof categories)[number];
 
 const Portfolio = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("All");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredArtworks = artworks.filter((artwork) => {
-    const matchesCategory = selectedCategory === "All" || artwork.category === selectedCategory;
-    const matchesSearch = artwork.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredArtworks = useMemo(() => {
+    return artworks.filter((artwork) => {
+      const matchesCategory = selectedCategory === "All" || artwork.category === selectedCategory;
+      const matchesSearch = artwork.title.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [searchQuery, selectedCategory]);
 
-  const featured = artworks.slice(0, 4);
+  const featured = useMemo(() => artworks.slice(0, 4), []);
 
   return (
     <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
