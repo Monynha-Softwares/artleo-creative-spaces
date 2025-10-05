@@ -27,8 +27,11 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright suite (visual + axe)
-        run: npm run test:playwright
+      - name: Run Playwright accessibility gate
+        run: npm run test:axe
+
+      - name: Run Playwright visual captures
+        run: npm run test:visual
 
       - name: Run Lighthouse audit
         run: npm run test:lighthouse
