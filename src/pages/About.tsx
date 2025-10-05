@@ -70,7 +70,7 @@ const About = () => {
           {/* Profile Image */}
           <SectionReveal delay={0.2}>
             <div className="relative">
-              <div className="aspect-square overflow-hidden rounded-2xl border border-border bg-gradient-mesh shadow-card">
+              <div className="aspect-square overflow-hidden rounded-2xl border border-border bg-gradient-mesh shadow-lg">
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop"
                   alt="Leonardo Silva"

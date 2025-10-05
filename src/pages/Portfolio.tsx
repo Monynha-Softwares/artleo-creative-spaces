@@ -77,7 +77,7 @@ const Portfolio = () => {
                 placeholder="Search artworks..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-12 rounded-full border-border bg-card pl-10"
+                className="h-12 rounded-full border-border bg-surface-1 shadow-sm pl-10"
               />
             </div>
 

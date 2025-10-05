@@ -135,7 +135,7 @@ export const FlowingMenu: React.FC<FlowingMenuProps> = ({ items, activeHref, onI
 
   return (
     <div className={cn("w-full overflow-hidden", className)}>
-      <nav className="flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card/80 backdrop-blur-xl">
+      <nav className="flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-surface-1/80 backdrop-blur-xl">
         {items.map((item) => (
           <MenuItem
             key={item.href}

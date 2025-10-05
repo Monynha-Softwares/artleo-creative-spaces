@@ -36,7 +36,7 @@ export const SpotlightCard = ({
         mouseY.set(0);
       }}
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-border/70 bg-card/80 p-8 backdrop-blur-xl transition-shadow",
+        "group relative overflow-hidden rounded-2xl border border-border/70 bg-surface-2/80 p-8 backdrop-blur-xl transition-shadow",
         "shadow-[0_25px_45px_-20px_rgba(76,0,130,0.35)]",
         className,
       )}

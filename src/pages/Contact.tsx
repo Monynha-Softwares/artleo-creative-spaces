@@ -74,7 +74,7 @@ const Contact = () => {
           </div>
         </SectionReveal>
 
-        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-[2rem] border border-border/60 bg-background/60 p-6 sm:rounded-[2.5rem] sm:p-10">
+        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-[2rem] border border-border/60 bg-surface-1/60 p-6 sm:rounded-[2.5rem] sm:p-10 shadow-lg">
           <RippleGridBackground />
           <div className="relative z-10 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
             {/* Contact Info */}
@@ -122,7 +122,7 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="Your name"
-                      className="bg-card border-border"
+                      className="border-border bg-surface-1 shadow-inset"
                     />
                   </div>
 
@@ -136,7 +136,7 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="your.email@example.com"
-                      className="bg-card border-border"
+                      className="border-border bg-surface-1 shadow-inset"
                     />
                   </div>
 
@@ -150,7 +150,7 @@ const Contact = () => {
                       onChange={handleChange}
                       placeholder="Tell me about your project or inquiry..."
                       rows={6}
-                      className="bg-card border-border resize-none"
+                      className="border-border bg-surface-1 shadow-inset resize-none"
                     />
                   </div>
 

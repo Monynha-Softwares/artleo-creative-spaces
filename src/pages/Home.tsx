@@ -34,7 +34,7 @@ const Home = () => {
               transition={{ delay: 0.3, duration: 1 }}
               className="mb-6 motion-reduce:animate-none"
             >
-              <span className="inline-flex flex-wrap items-center gap-2 rounded-full border border-border/50 bg-card/50 px-3 py-1 text-[clamp(0.85rem,3.2vw,0.95rem)] text-muted-foreground backdrop-blur-md whitespace-normal">
+              <span className="inline-flex flex-wrap items-center gap-2 rounded-full border border-border/50 bg-surface-1/50 px-3 py-1 text-[clamp(0.85rem,3.2vw,0.95rem)] text-muted-foreground backdrop-blur-md whitespace-normal">
                 <Sparkles className="h-4 w-4 text-primary" />
                 Digital Artist & Creative Developer
               </span>
@@ -85,7 +85,7 @@ const Home = () => {
       </section>
 
       {/* Featured Work Preview */}
-      <section className="bg-gradient-to-b from-background to-card/20 py-16 sm:py-24">
+      <section className="bg-gradient-to-b from-surface-0 to-surface-1/20 py-16 sm:py-24">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <SectionReveal>
             <div className="text-center mb-16">

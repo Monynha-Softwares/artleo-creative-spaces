@@ -38,7 +38,7 @@ export const GooeyNav = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6">
       <nav
-        className="mx-auto flex w-full max-w-5xl items-center justify-between gap-2 rounded-full border border-border/70 bg-background/70 px-4 py-2 backdrop-blur-xl motion-reduce:transition-none min-h-[3.5rem]"
+        className="mx-auto flex w-full max-w-5xl items-center justify-between gap-2 rounded-full border border-border/70 bg-surface-0/70 px-4 py-2 backdrop-blur-xl motion-reduce:transition-none min-h-[3.5rem]"
       >
         <Link
           to="/"
@@ -73,7 +73,7 @@ export const GooeyNav = () => {
             ))}
           </div>
         <button
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-card/70 p-2 text-foreground motion-reduce:transition-none md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-surface-1/70 p-2 text-foreground motion-reduce:transition-none md:hidden"
           onClick={() => setOpen((prev) => !prev)}
           aria-label="Toggle navigation"
           aria-expanded={open}

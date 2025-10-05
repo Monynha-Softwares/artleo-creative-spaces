@@ -21,8 +21,8 @@ export const RollingGallery = ({ items, speed = 30 }: RollingGalleryProps) => {
   const duplicated = [...items, ...items];
 
   return (
-    <div className="relative overflow-hidden rounded-[2.5rem] border border-border/70 bg-card/70 p-1 backdrop-blur-xl">
-      <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background opacity-70" />
+    <div className="relative overflow-hidden rounded-[2.5rem] border border-border/70 bg-surface-2/70 p-1 backdrop-blur-xl">
+      <div className="absolute inset-0 bg-gradient-to-r from-surface-0 via-transparent to-surface-0 opacity-70" />
       <motion.div
         className="flex gap-6 py-8"
         animate={
@@ -63,8 +63,8 @@ export const RollingGallery = ({ items, speed = 30 }: RollingGalleryProps) => {
           return content;
         })}
       </motion.div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background via-background/70 to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background via-background/70 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-surface-0 via-surface-0/70 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-surface-0 via-surface-0/70 to-transparent" />
     </div>
   );
 };
