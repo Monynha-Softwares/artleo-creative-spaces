@@ -27,6 +27,10 @@ Art Leo is a Vite + React portfolio that pairs cinematic motion design with inte
 - Node.js 18.18 or newer (Node 20 LTS recommended)
 - npm 9+ (bundled with recent Node.js releases)
 
+> ℹ️ **Deployment tip:** The project ships with `package-lock.json` and uses npm throughout the toolchain. Keeping the workspace
+> free of `bun.lockb` (or other Bun manifests) prevents automated builders such as Nixpacks from provisioning Bun runtimes,
+> avoiding disk pressure during containerized deploys.
+
 ### Installation
 
 ```bash
