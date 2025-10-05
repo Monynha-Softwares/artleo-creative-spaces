@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -13,12 +14,21 @@ export default {
       },
     },
     extend: {
+      translate: {
+        101: "101%",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        surface: {
+          0: "hsl(var(--surface-0))",
+          1: "hsl(var(--surface-1))",
+          2: "hsl(var(--surface-2))",
+          3: "hsl(var(--surface-3))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -54,10 +64,14 @@ export default {
         "gradient-primary": "var(--gradient-primary)",
         "gradient-glow": "var(--gradient-glow)",
         "gradient-mesh": "var(--gradient-mesh)",
+        topGlow: "var(--top-glow)",
       },
       boxShadow: {
         glow: "var(--shadow-glow)",
+        depthSm: "var(--shadow-depth-sm)",
         depth: "var(--shadow-depth)",
+        depthLg: "var(--shadow-depth-lg)",
+        insetDepth: "var(--shadow-inset-depth)",
         card: "var(--shadow-card)",
       },
       transitionTimingFunction: {
@@ -113,6 +127,10 @@ export default {
           "0%": { clipPath: "inset(0 100% 0 0)" },
           "100%": { clipPath: "inset(0 0 0 0)" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.3s ease-out",
@@ -123,8 +141,9 @@ export default {
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         float: "float 6s ease-in-out infinite",
         "reveal-text": "reveal-text 1.2s cubic-bezier(0.77, 0, 0.175, 1)",
+        marquee: "marquee 18s linear infinite",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,63 +8,82 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, Instagram, Send } from "lucide-react";
 import { GlassIcon } from "@/components/reactbits/GlassIcon";
 import { RippleGridBackground } from "@/components/reactbits/RippleGridBackground";
+import { useContactForm } from "@/hooks/useContactForm";
+
+const initialFormState = {
+  name: "",
+  email: "",
+  message: "",
+};
+
+type ContactFormState = typeof initialFormState;
 
 const Contact = () => {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState<ContactFormState>(initialFormState);
+  const { mutate: submitContact, isPending } = useContactForm();
+
+  const resetForm = useCallback(() => {
+    setFormData(() => ({ ...initialFormState }));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    // Simulate submission - will be connected to Lovable Cloud
-    setTimeout(() => {
-      toast({
-        title: "Message sent!",
-        description: "Thank you for reaching out. I'll get back to you soon.",
-      });
-      setFormData({ name: "", email: "", message: "" });
-      setIsSubmitting(false);
-    }, 1000);
+    submitContact(formData, {
+      onSuccess: () => {
+        toast({
+          title: "Message sent!",
+          description: "Thank you for reaching out. I'll get back to you soon.",
+        });
+        resetForm();
+      },
+      onError: (error) => {
+        toast({
+          title: "Error sending message",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    },
+    [],
+  );
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
+      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
         {/* Header */}
         <SectionReveal>
-          <div className="text-center mb-16">
-            <h1 className="text-fluid-4xl font-bold mb-4">
+          <div className="mb-14 text-center">
+            <h1 className="mb-4 text-[clamp(2rem,7vw,3.5rem)] font-bold leading-tight text-balance">
               Get in <span className="bg-gradient-primary bg-clip-text text-transparent">Touch</span>
             </h1>
-            <p className="text-fluid-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-[clamp(1rem,3.4vw,1.15rem)] text-muted-foreground leading-relaxed text-balance">
               Have a project in mind or just want to say hello? I'd love to hear from you.
             </p>
           </div>
         </SectionReveal>
 
-        <div className="relative max-w-4xl mx-auto rounded-[2.5rem] border border-border/60 bg-background/60 p-10 overflow-hidden">
+        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-[2rem] border border-border/60 bg-background/60 p-6 sm:rounded-[2.5rem] sm:p-10">
           <RippleGridBackground />
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="relative z-10 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
             {/* Contact Info */}
             <div className="col-span-1">
               <SectionReveal delay={0.1}>
                 <div className="space-y-8">
                   <div>
-                    <h2 className="text-fluid-2xl font-bold mb-6">Let's Connect</h2>
-                    <p className="text-muted-foreground leading-relaxed mb-6">
+                    <h2 className="mb-6 text-[clamp(1.5rem,5.5vw,2.5rem)] font-bold leading-tight">Let's Connect</h2>
+                    <p className="mb-6 text-[clamp(1rem,3.3vw,1.1rem)] text-muted-foreground leading-relaxed">
                       Whether you're interested in collaborating, commissioning work, or just
                       want to chat about art and technology, feel free to reach out through
                       the form or my social channels.
@@ -73,13 +92,13 @@ const Contact = () => {
 
                   <div className="space-y-4">
                     <GlassIcon
-                      icon={<Mail className="w-6 h-6" />}
+                      icon={<Mail className="h-6 w-6" />}
                       title="Email"
                       description="contact@artleo.com"
                       href="mailto:contact@artleo.com"
                     />
                     <GlassIcon
-                      icon={<Instagram className="w-6 h-6" />}
+                      icon={<Instagram className="h-6 w-6" />}
                       title="Instagram"
                       description="@leonardossil"
                       href="https://www.instagram.com/leonardossil/"
@@ -139,10 +158,10 @@ const Contact = () => {
                     type="submit"
                     variant="hero"
                     size="lg"
-                    className="w-full"
-                    disabled={isSubmitting}
+                    className="w-full motion-reduce:transition-none"
+                    disabled={isPending}
                   >
-                    {isSubmitting ? (
+                    {isPending ? (
                       "Sending..."
                     ) : (
                       <>
