@@ -7,85 +7,33 @@ import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 import { RollingGallery } from "@/components/reactbits/RollingGallery";
 import { PixelCard } from "@/components/reactbits/PixelCard";
+import { useArtworks } from "@/hooks/useArtworks";
+import { ArtworkSkeleton } from "@/components/ArtworkSkeleton";
 
-// Mock data - will be replaced with Lovable Cloud data
-type Artwork = {
-  id: number;
-  slug: string;
-  title: string;
-  category: "Motion Design" | "3D Art" | "Interactive";
-  year: number;
-  coverUrl: string;
-};
-
-const artworks: Artwork[] = [
-  {
-    id: 1,
-    slug: "motion-study-01",
-    title: "Motion Study 01",
-    category: "Motion Design",
-    year: 2024,
-    coverUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    slug: "abstract-forms",
-    title: "Abstract Forms",
-    category: "3D Art",
-    year: 2024,
-    coverUrl: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 3,
-    slug: "digital-sculpture",
-    title: "Digital Sculpture",
-    category: "3D Art",
-    year: 2023,
-    coverUrl: "https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    slug: "fluid-dynamics",
-    title: "Fluid Dynamics",
-    category: "Motion Design",
-    year: 2023,
-    coverUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 5,
-    slug: "neon-dreams",
-    title: "Neon Dreams",
-    category: "Interactive",
-    year: 2024,
-    coverUrl: "https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 6,
-    slug: "geometric-harmony",
-    title: "Geometric Harmony",
-    category: "3D Art",
-    year: 2023,
-    coverUrl: "https://images.unsplash.com/photo-1617791160505-6f00504e3519?w=800&auto=format&fit=crop",
-  },
-];
-
-const categories = ["All", "Motion Design", "3D Art", "Interactive"] as const;
-
+const categories = ["all", "motion-design", "3d-art", "interactive", "generative"] as const;
 type CategoryFilter = (typeof categories)[number];
 
 const Portfolio = () => {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("All");
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredArtworks = useMemo(() => {
-    return artworks.filter((artwork) => {
-      const matchesCategory = selectedCategory === "All" || artwork.category === selectedCategory;
-      const matchesSearch = artwork.title.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [searchQuery, selectedCategory]);
+  const { data: artworks = [], isLoading, error } = useArtworks({
+    category: selectedCategory,
+    search: searchQuery,
+  });
 
-  const featured = useMemo(() => artworks.slice(0, 4), []);
+  const featured = useMemo(() => artworks.slice(0, 4), [artworks]);
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center pt-24 pb-16 px-4">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Error Loading Portfolio</h2>
+          <p className="text-muted-foreground">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
@@ -102,19 +50,21 @@ const Portfolio = () => {
           </div>
         </SectionReveal>
 
-        <SectionReveal delay={0.05}>
-          <RollingGallery
-            items={featured.map((item) => ({
-              id: item.id,
-              title: item.title,
-              subtitle: item.category,
-              imageUrl: item.coverUrl,
-              href: `/art/${item.slug}`,
-              footer: <span className="text-sm">{item.year}</span>,
-            }))}
-            speed={24}
-          />
-        </SectionReveal>
+        {!isLoading && featured.length > 0 && (
+          <SectionReveal delay={0.05}>
+            <RollingGallery
+              items={featured.map((item) => ({
+                id: item.id,
+                title: item.title,
+                subtitle: item.category,
+                imageUrl: item.cover_url,
+                href: `/art/${item.slug}`,
+                footer: <span className="text-sm">{item.year}</span>,
+              }))}
+              speed={24}
+            />
+          </SectionReveal>
+        )}
 
         {/* Filters */}
         <SectionReveal delay={0.1}>
@@ -150,32 +100,37 @@ const Portfolio = () => {
         </SectionReveal>
 
         {/* Gallery Grid */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3"
-        >
-          {filteredArtworks.map((artwork, index) => (
-            <motion.div
-              key={artwork.id}
-              layout
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-            >
-              <Link to={`/art/${artwork.slug}`} className="block">
-                <PixelCard
-                  imageUrl={artwork.coverUrl}
-                  title={artwork.title}
-                  subtitle={artwork.category}
-                  footer={<span className="text-sm">{artwork.year}</span>}
-                />
-              </Link>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* No Results */}
-        {filteredArtworks.length === 0 && (
+        {isLoading ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <ArtworkSkeleton key={i} />
+            ))}
+          </div>
+        ) : artworks.length > 0 ? (
+          <motion.div
+            layout
+            className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3"
+          >
+            {artworks.map((artwork, index) => (
+              <motion.div
+                key={artwork.id}
+                layout
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+              >
+                <Link to={`/art/${artwork.slug}`} className="block">
+                  <PixelCard
+                    imageUrl={artwork.cover_url}
+                    title={artwork.title}
+                    subtitle={artwork.category}
+                    footer={<span className="text-sm">{artwork.year}</span>}
+                  />
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
           <SectionReveal>
             <div className="text-center py-16">
               <p className="text-fluid-lg text-muted-foreground">

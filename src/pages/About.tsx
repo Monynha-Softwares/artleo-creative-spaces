@@ -4,34 +4,18 @@ import { Instagram, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { TextType } from "@/components/reactbits/TextType";
 import { StepperTimeline } from "@/components/reactbits/StepperTimeline";
+import { useExhibitions } from "@/hooks/useExhibitions";
+import { TimelineSkeleton } from "@/components/TimelineSkeleton";
 
 const About = () => {
-  const timeline = [
-    {
-      title: "Solo Exhibition",
-      subtitle: "2024 · Digital Futures Gallery",
-      description: "Immersive installations exploring fluid motion and responsive light.",
-      indicator: "2024",
-    },
-    {
-      title: "Collective Showcase",
-      subtitle: "2023 · Contemporary Digital Art Collective",
-      description: "Collaborative audiovisual experience blending live coding and sculpture.",
-      indicator: "2023",
-    },
-    {
-      title: "Motion Lab Residency",
-      subtitle: "2023 · Motion Lab Studio",
-      description: "Developed generative systems to translate gesture into volumetric visuals.",
-      indicator: "2023",
-    },
-    {
-      title: "Interactive Installation Award",
-      subtitle: "2022 · Future Interfaces Festival",
-      description: "Recognized for a spatial narrative that reacted to sound and presence.",
-      indicator: "2022",
-    },
-  ];
+  const { data: exhibitions = [], isLoading, error } = useExhibitions();
+
+  const timeline = exhibitions.map((exhibition) => ({
+    title: exhibition.title,
+    subtitle: `${exhibition.year} · ${exhibition.location || ""}`,
+    description: exhibition.description || "",
+    indicator: exhibition.year.toString(),
+  }));
 
   return (
     <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
@@ -104,7 +88,15 @@ const About = () => {
             <h2 className="mb-8 text-center text-[clamp(1.75rem,6vw,2.75rem)] font-bold leading-tight">
               Exhibitions & <span className="bg-gradient-primary bg-clip-text text-transparent">Timeline</span>
             </h2>
-            <StepperTimeline steps={timeline} />
+            {isLoading ? (
+              <TimelineSkeleton />
+            ) : error ? (
+              <p className="text-center text-muted-foreground">Error loading exhibitions</p>
+            ) : timeline.length > 0 ? (
+              <StepperTimeline steps={timeline} />
+            ) : (
+              <p className="text-center text-muted-foreground">No exhibitions to display yet.</p>
+            )}
           </div>
         </SectionReveal>
       </div>

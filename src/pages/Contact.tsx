@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, Instagram, Send } from "lucide-react";
 import { GlassIcon } from "@/components/reactbits/GlassIcon";
 import { RippleGridBackground } from "@/components/reactbits/RippleGridBackground";
+import { useContactForm } from "@/hooks/useContactForm";
 
 const initialFormState = {
   name: "",
@@ -19,9 +20,8 @@ type ContactFormState = typeof initialFormState;
 
 const Contact = () => {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ContactFormState>(initialFormState);
-  const pendingTimeoutRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
+  const { mutate: submitContact, isPending } = useContactForm();
 
   const resetForm = useCallback(() => {
     setFormData(() => ({ ...initialFormState }));
@@ -29,23 +29,23 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    const simulateSubmission = () =>
-      new Promise<void>((resolve) => {
-        pendingTimeoutRef.current = window.setTimeout(resolve, 1000);
-      });
-
-    await simulateSubmission();
-    pendingTimeoutRef.current = null;
-
-    toast({
-      title: "Message sent!",
-      description: "Thank you for reaching out. I'll get back to you soon.",
+    submitContact(formData, {
+      onSuccess: () => {
+        toast({
+          title: "Message sent!",
+          description: "Thank you for reaching out. I'll get back to you soon.",
+        });
+        resetForm();
+      },
+      onError: (error) => {
+        toast({
+          title: "Error sending message",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
     });
-
-    resetForm();
-    setIsSubmitting(false);
   };
 
   const handleChange = useCallback(
@@ -58,15 +58,6 @@ const Contact = () => {
     },
     [],
   );
-
-  useEffect(() => {
-    return () => {
-      if (pendingTimeoutRef.current) {
-        window.clearTimeout(pendingTimeoutRef.current);
-        pendingTimeoutRef.current = null;
-      }
-    };
-  }, []);
 
   return (
     <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
@@ -168,9 +159,9 @@ const Contact = () => {
                     variant="hero"
                     size="lg"
                     className="w-full motion-reduce:transition-none"
-                    disabled={isSubmitting}
+                    disabled={isPending}
                   >
-                    {isSubmitting ? (
+                    {isPending ? (
                       "Sending..."
                     ) : (
                       <>
