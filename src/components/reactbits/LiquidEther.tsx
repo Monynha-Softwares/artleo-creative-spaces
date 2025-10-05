@@ -145,6 +145,7 @@ export default function LiquidEther({
         this._onTouchStart = this.onDocumentTouchStart.bind(this);
         this._onTouchMove = this.onDocumentTouchMove.bind(this);
         this._onTouchEnd = this.onTouchEnd.bind(this);
+        this.listenerOptions = { passive: true };
         this.isHoverInside = false;
         this.hasUserControl = false;
         this.isAutoActive = false;
@@ -160,17 +161,17 @@ export default function LiquidEther({
         this.container = container;
         if (typeof window === 'undefined') return;
         this.eventTarget = window;
-        this.eventTarget.addEventListener('mousemove', this._onMouseMove, { passive: true });
-        this.eventTarget.addEventListener('touchstart', this._onTouchStart, { passive: true });
-        this.eventTarget.addEventListener('touchmove', this._onTouchMove, { passive: true });
-        this.eventTarget.addEventListener('touchend', this._onTouchEnd, { passive: true });
+        this.eventTarget.addEventListener('mousemove', this._onMouseMove, this.listenerOptions);
+        this.eventTarget.addEventListener('touchstart', this._onTouchStart, this.listenerOptions);
+        this.eventTarget.addEventListener('touchmove', this._onTouchMove, this.listenerOptions);
+        this.eventTarget.addEventListener('touchend', this._onTouchEnd, this.listenerOptions);
       }
       dispose() {
         if (!this.eventTarget) return;
-        this.eventTarget.removeEventListener('mousemove', this._onMouseMove, false);
-        this.eventTarget.removeEventListener('touchstart', this._onTouchStart, false);
-        this.eventTarget.removeEventListener('touchmove', this._onTouchMove, false);
-        this.eventTarget.removeEventListener('touchend', this._onTouchEnd, false);
+        this.eventTarget.removeEventListener('mousemove', this._onMouseMove, this.listenerOptions);
+        this.eventTarget.removeEventListener('touchstart', this._onTouchStart, this.listenerOptions);
+        this.eventTarget.removeEventListener('touchmove', this._onTouchMove, this.listenerOptions);
+        this.eventTarget.removeEventListener('touchend', this._onTouchEnd, this.listenerOptions);
       }
       setCoords(x, y) {
         if (!this.container) return;
