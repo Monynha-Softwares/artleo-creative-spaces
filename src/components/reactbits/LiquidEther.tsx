@@ -1,7 +1,39 @@
 // @ts-nocheck
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import './LiquidEther.css';
+
+const createPaletteTexture = stops => {
+  let paletteStops;
+  if (Array.isArray(stops) && stops.length > 0) {
+    paletteStops = stops.length === 1 ? [stops[0], stops[0]] : stops;
+  } else if (typeof stops === 'string' && stops.length > 0) {
+    paletteStops = [stops, stops];
+  } else {
+    paletteStops = ['#ffffff', '#ffffff'];
+  }
+
+  const width = paletteStops.length;
+  const data = new Uint8Array(width * 4);
+
+  for (let i = 0; i < width; i++) {
+    const color = new THREE.Color(paletteStops[i]);
+    data[i * 4 + 0] = Math.round(color.r * 255);
+    data[i * 4 + 1] = Math.round(color.g * 255);
+    data[i * 4 + 2] = Math.round(color.b * 255);
+    data[i * 4 + 3] = 255;
+  }
+
+  const texture = new THREE.DataTexture(data, width, 1, THREE.RGBAFormat);
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearFilter;
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.generateMipmaps = false;
+  texture.needsUpdate = true;
+
+  return texture;
+};
 
 export default function LiquidEther({
   mouseForce = 20,
@@ -31,41 +63,27 @@ export default function LiquidEther({
   const intersectionObserverRef = useRef(null);
   const isVisibleRef = useRef(true);
   const resizeRafRef = useRef(null);
+  const paletteTextureRef = useRef(null);
+  const paletteKeyRef = useRef('');
+
+  const paletteKey = useMemo(() => {
+    if (Array.isArray(colors)) return colors.join(',');
+    if (typeof colors === 'string') return colors;
+    return '';
+  }, [colors]);
+
+  const paletteStops = useMemo(() => {
+    if (Array.isArray(colors)) return colors;
+    if (typeof colors === 'string') return [colors];
+    return [];
+  }, [paletteKey]);
 
   useEffect(() => {
     if (!mountRef.current) return;
 
-    function makePaletteTexture(stops) {
-      let arr;
-      if (Array.isArray(stops) && stops.length > 0) {
-        if (stops.length === 1) {
-          arr = [stops[0], stops[0]];
-        } else {
-          arr = stops;
-        }
-      } else {
-        arr = ['#ffffff', '#ffffff'];
-      }
-      const w = arr.length;
-      const data = new Uint8Array(w * 4);
-      for (let i = 0; i < w; i++) {
-        const c = new THREE.Color(arr[i]);
-        data[i * 4 + 0] = Math.round(c.r * 255);
-        data[i * 4 + 1] = Math.round(c.g * 255);
-        data[i * 4 + 2] = Math.round(c.b * 255);
-        data[i * 4 + 3] = 255;
-      }
-      const tex = new THREE.DataTexture(data, w, 1, THREE.RGBAFormat);
-      tex.magFilter = THREE.LinearFilter;
-      tex.minFilter = THREE.LinearFilter;
-      tex.wrapS = THREE.ClampToEdgeWrapping;
-      tex.wrapT = THREE.ClampToEdgeWrapping;
-      tex.generateMipmaps = false;
-      tex.needsUpdate = true;
-      return tex;
-    }
-
-    const paletteTex = makePaletteTexture(colors);
+    const paletteTex = createPaletteTexture(paletteStops);
+    paletteTextureRef.current = paletteTex;
+    paletteKeyRef.current = paletteKey;
     const bgVec4 = new THREE.Vector4(0, 0, 0, 0); // always transparent
 
     class CommonClass {
@@ -1070,26 +1088,38 @@ export default function LiquidEther({
         webglRef.current.dispose();
       }
       webglRef.current = null;
+      if (paletteTextureRef.current && typeof paletteTextureRef.current.dispose === 'function') {
+        paletteTextureRef.current.dispose();
+      }
+      paletteTextureRef.current = null;
     };
-  }, [
-    BFECC,
-    cursorSize,
-    dt,
-    isBounce,
-    isViscous,
-    iterationsPoisson,
-    iterationsViscous,
-    mouseForce,
-    resolution,
-    viscous,
-    colors,
-    autoDemo,
-    autoSpeed,
-    autoIntensity,
-    takeoverDuration,
-    autoResumeDelay,
-    autoRampDuration
-  ]);
+  }, []);
+
+  useEffect(() => {
+    if (!webglRef.current) return;
+    if (paletteKeyRef.current === paletteKey) return;
+
+    const newPalette = createPaletteTexture(paletteStops);
+    const output = webglRef.current.output?.output;
+    const uniforms = output?.material?.uniforms;
+
+    if (!uniforms?.palette) {
+      newPalette.dispose();
+      return;
+    }
+
+    const previousPalette = paletteTextureRef.current;
+    uniforms.palette.value = newPalette;
+    uniforms.palette.value.needsUpdate = true;
+    if (output.material) {
+      output.material.needsUpdate = true;
+    }
+    paletteTextureRef.current = newPalette;
+    paletteKeyRef.current = paletteKey;
+    if (previousPalette && typeof previousPalette.dispose === 'function') {
+      previousPalette.dispose();
+    }
+  }, [paletteKey, paletteStops]);
 
   useEffect(() => {
     const webgl = webglRef.current;
