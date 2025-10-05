@@ -59,6 +59,24 @@ npm run lint
 
 Linting ensures TypeScript, React, and accessibility conventions stay consistent.
 
+### Storybook & visual regression
+
+- `npm run storybook` abre o Storybook com os componentes integrados ao tema do Art Leo.
+- `npm run build-storybook` gera a versão estática em `storybook-static/` para publicação.
+- `npm run chromatic` publica a build no Chromatic (defina `CHROMATIC_PROJECT_TOKEN` nos segredos do CI).
+
+### Playwright automation
+
+- `npm run test:e2e` executa toda a suíte Playwright (acessibilidade + capturas).
+- `npm run test:visual` gera screenshots por breakpoint e as anexa ao relatório HTML (`playwright-report/`).
+- `npm run test:axe` roda apenas as verificações do axe-core usando o projeto desktop.
+
+### Lighthouse & relatórios de performance
+
+- `npm run test:lighthouse` cria a build, sobe um servidor estático e salva os relatórios JSON/HTML em `./.lighthouse`.
+
+Consulte também a documentação de auditoria e checklist em `docs/ui-audit.md` e `docs/ui-checklist.md`.
+
 ## Project structure
 
 ```
