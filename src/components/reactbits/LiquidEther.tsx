@@ -107,11 +107,6 @@ export default function LiquidEther({
     resolution,
     isBounce
   };
-  const paletteInitialKeyRef = useRef(paletteKey);
-  const paletteInitialStopsRef = useRef(paletteStops);
-  paletteInitialKeyRef.current = paletteKey;
-  paletteInitialStopsRef.current = paletteStops;
-
   const paletteKey = useMemo(() => {
     if (Array.isArray(colors)) return colors.join(',');
     if (typeof colors === 'string') return colors;
@@ -123,6 +118,11 @@ export default function LiquidEther({
     if (typeof colors === 'string') return [colors];
     return [];
   }, [colors]);
+
+  const paletteInitialKeyRef = useRef(paletteKey);
+  const paletteInitialStopsRef = useRef(paletteStops);
+  paletteInitialKeyRef.current = paletteKey;
+  paletteInitialStopsRef.current = paletteStops;
 
   useEffect(() => {
     if (!mountRef.current) return;
