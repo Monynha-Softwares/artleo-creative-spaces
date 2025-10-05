@@ -24,7 +24,7 @@ const Contact = () => {
   const { mutate: submitContact, isPending } = useContactForm();
 
   const resetForm = useCallback(() => {
-    setFormData(() => ({ ...initialFormState }));
+    setFormData(initialFormState);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

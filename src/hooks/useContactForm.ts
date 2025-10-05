@@ -2,6 +2,13 @@ import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 
+const sanitizeInput = (value: string) =>
+  value
+    .replace(/<script.*?>.*?<\/script>/gi, "")
+    .replace(/on\w+="[^"]*"/gi, "")
+    .replace(/[<>]/g, "")
+    .trim();
+
 export const contactSchema = z.object({
   name: z
     .string()
@@ -28,13 +35,19 @@ export const useContactForm = () => {
       // Validate data
       const validatedData = contactSchema.parse(formData);
 
+      const sanitizedData = {
+        name: sanitizeInput(validatedData.name),
+        email: sanitizeInput(validatedData.email),
+        message: sanitizeInput(validatedData.message),
+      } satisfies ContactFormData;
+
       const { error } = await supabase
         .from("contact_messages")
         .insert([
           {
-            name: validatedData.name,
-            email: validatedData.email,
-            message: validatedData.message,
+            name: sanitizedData.name,
+            email: sanitizedData.email,
+            message: sanitizedData.message,
             status: "unread",
           },
         ]);
