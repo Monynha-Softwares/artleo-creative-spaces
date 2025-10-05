@@ -12,7 +12,7 @@ const LiquidEtherBackground = () => {
   const palette = useMemo(() => ['#5227FF', '#FF9FFC', '#B19EEF'], []);
 
   return (
-    <div className="absolute inset-0" role="presentation" aria-hidden>
+    <div className="pointer-events-none absolute inset-0 -z-10" role="presentation" aria-hidden>
       {reduceMotion ? (
         <div className="absolute inset-0 overflow-hidden bg-gradient-to-br from-[#1a1033] via-[#0a0d1f] to-[#06121f]">
           <div
@@ -40,6 +40,8 @@ const LiquidEtherBackground = () => {
           takeoverDuration={0.25}
           autoResumeDelay={3000}
           autoRampDuration={0.6}
+          useGlobalListeners
+          className="pointer-events-none"
         />
       )}
     </div>

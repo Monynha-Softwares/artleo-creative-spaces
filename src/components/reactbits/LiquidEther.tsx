@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
@@ -54,7 +55,8 @@ export default function LiquidEther({
   autoIntensity = 2.2,
   takeoverDuration = 0.25,
   autoResumeDelay = 3000,
-  autoRampDuration = 0.6
+  autoRampDuration = 0.6,
+  useGlobalListeners = false
 }) {
   const mountRef = useRef(null);
   const webglRef = useRef(null);
@@ -65,6 +67,50 @@ export default function LiquidEther({
   const resizeRafRef = useRef(null);
   const paletteTextureRef = useRef(null);
   const paletteKeyRef = useRef('');
+  const autoOptionsRef = useRef({
+    autoDemo,
+    autoSpeed,
+    autoIntensity,
+    takeoverDuration,
+    autoResumeDelay,
+    autoRampDuration
+  });
+  autoOptionsRef.current = {
+    autoDemo,
+    autoSpeed,
+    autoIntensity,
+    takeoverDuration,
+    autoResumeDelay,
+    autoRampDuration
+  };
+  const simOptionsRef = useRef({
+    mouseForce,
+    cursorSize,
+    isViscous,
+    viscous,
+    iterationsViscous,
+    iterationsPoisson,
+    dt,
+    BFECC,
+    resolution,
+    isBounce
+  });
+  simOptionsRef.current = {
+    mouseForce,
+    cursorSize,
+    isViscous,
+    viscous,
+    iterationsViscous,
+    iterationsPoisson,
+    dt,
+    BFECC,
+    resolution,
+    isBounce
+  };
+  const paletteInitialKeyRef = useRef(paletteKey);
+  const paletteInitialStopsRef = useRef(paletteStops);
+  paletteInitialKeyRef.current = paletteKey;
+  paletteInitialStopsRef.current = paletteStops;
 
   const paletteKey = useMemo(() => {
     if (Array.isArray(colors)) return colors.join(',');
@@ -76,14 +122,15 @@ export default function LiquidEther({
     if (Array.isArray(colors)) return colors;
     if (typeof colors === 'string') return [colors];
     return [];
-  }, [paletteKey]);
+  }, [colors]);
 
   useEffect(() => {
     if (!mountRef.current) return;
 
-    const paletteTex = createPaletteTexture(paletteStops);
+    const paletteTex = createPaletteTexture(paletteInitialStopsRef.current);
     paletteTextureRef.current = paletteTex;
-    paletteKeyRef.current = paletteKey;
+    const initialPaletteKey = paletteInitialKeyRef.current;
+    paletteKeyRef.current = initialPaletteKey;
     const bgVec4 = new THREE.Vector4(0, 0, 0, 0); // always transparent
 
     class CommonClass {
@@ -140,12 +187,15 @@ export default function LiquidEther({
         this.diff = new THREE.Vector2();
         this.timer = null;
         this.container = null;
+        this.eventTarget = null;
+        this.eventMode = 'container';
         this._onMouseMove = this.onDocumentMouseMove.bind(this);
         this._onTouchStart = this.onDocumentTouchStart.bind(this);
         this._onTouchMove = this.onDocumentTouchMove.bind(this);
         this._onMouseEnter = this.onMouseEnter.bind(this);
         this._onMouseLeave = this.onMouseLeave.bind(this);
         this._onTouchEnd = this.onTouchEnd.bind(this);
+        this._onWindowMouseOut = this.onWindowMouseOut.bind(this);
         this.isHoverInside = false;
         this.hasUserControl = false;
         this.isAutoActive = false;
@@ -157,31 +207,51 @@ export default function LiquidEther({
         this.takeoverTo = new THREE.Vector2();
         this.onInteract = null;
       }
-      init(container) {
+      init(container, eventTarget = container, mode = 'container') {
         this.container = container;
-        container.addEventListener('mousemove', this._onMouseMove, false);
-        container.addEventListener('touchstart', this._onTouchStart, false);
-        container.addEventListener('touchmove', this._onTouchMove, false);
-        container.addEventListener('mouseenter', this._onMouseEnter, false);
-        container.addEventListener('mouseleave', this._onMouseLeave, false);
-        container.addEventListener('touchend', this._onTouchEnd, false);
+        this.eventTarget = eventTarget || container;
+        this.eventMode = mode;
+        const target = this.eventTarget;
+        if (!target) return;
+        target.addEventListener('mousemove', this._onMouseMove, false);
+        target.addEventListener('touchstart', this._onTouchStart, false);
+        target.addEventListener('touchmove', this._onTouchMove, false);
+        target.addEventListener('touchend', this._onTouchEnd, false);
+        if (mode === 'container' && container) {
+          container.addEventListener('mouseenter', this._onMouseEnter, false);
+          container.addEventListener('mouseleave', this._onMouseLeave, false);
+        } else if (typeof window !== 'undefined') {
+          window.addEventListener('mouseout', this._onWindowMouseOut, false);
+        }
       }
       dispose() {
-        if (!this.container) return;
-        this.container.removeEventListener('mousemove', this._onMouseMove, false);
-        this.container.removeEventListener('touchstart', this._onTouchStart, false);
-        this.container.removeEventListener('touchmove', this._onTouchMove, false);
-        this.container.removeEventListener('mouseenter', this._onMouseEnter, false);
-        this.container.removeEventListener('mouseleave', this._onMouseLeave, false);
-        this.container.removeEventListener('touchend', this._onTouchEnd, false);
+        const target = this.eventTarget;
+        if (target) {
+          target.removeEventListener('mousemove', this._onMouseMove, false);
+          target.removeEventListener('touchstart', this._onTouchStart, false);
+          target.removeEventListener('touchmove', this._onTouchMove, false);
+          target.removeEventListener('touchend', this._onTouchEnd, false);
+        }
+        if (this.container && this.eventMode === 'container') {
+          this.container.removeEventListener('mouseenter', this._onMouseEnter, false);
+          this.container.removeEventListener('mouseleave', this._onMouseLeave, false);
+        }
+        if (this.eventMode !== 'container' && typeof window !== 'undefined') {
+          window.removeEventListener('mouseout', this._onWindowMouseOut, false);
+        }
+        this.container = null;
+        this.eventTarget = null;
       }
       setCoords(x, y) {
         if (!this.container) return;
         if (this.timer) clearTimeout(this.timer);
         const rect = this.container.getBoundingClientRect();
-        const nx = (x - rect.left) / rect.width;
-        const ny = (y - rect.top) / rect.height;
+        const width = rect.width || 1;
+        const height = rect.height || 1;
+        const nx = (x - rect.left) / width;
+        const ny = (y - rect.top) / height;
         this.coords.set(nx * 2 - 1, -(ny * 2 - 1));
+        this.isHoverInside = nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1;
         this.mouseMoved = true;
         this.timer = setTimeout(() => {
           this.mouseMoved = false;
@@ -190,13 +260,16 @@ export default function LiquidEther({
       setNormalized(nx, ny) {
         this.coords.set(nx, ny);
         this.mouseMoved = true;
+        this.isHoverInside = nx >= -1 && nx <= 1 && ny >= -1 && ny <= 1;
       }
       onDocumentMouseMove(event) {
         if (this.onInteract) this.onInteract();
         if (this.isAutoActive && !this.hasUserControl && !this.takeoverActive) {
           const rect = this.container.getBoundingClientRect();
-          const nx = (event.clientX - rect.left) / rect.width;
-          const ny = (event.clientY - rect.top) / rect.height;
+          const width = rect.width || 1;
+          const height = rect.height || 1;
+          const nx = (event.clientX - rect.left) / width;
+          const ny = (event.clientY - rect.top) / height;
           this.takeoverFrom.copy(this.coords);
           this.takeoverTo.set(nx * 2 - 1, -(ny * 2 - 1));
           this.takeoverStartTime = performance.now();
@@ -231,6 +304,11 @@ export default function LiquidEther({
       }
       onMouseLeave() {
         this.isHoverInside = false;
+      }
+      onWindowMouseOut(event) {
+        if (!event.relatedTarget) {
+          this.isHoverInside = false;
+        }
       }
       update() {
         if (this.takeoverActive) {
@@ -783,7 +861,7 @@ export default function LiquidEther({
           wrapS: THREE.ClampToEdgeWrapping,
           wrapT: THREE.ClampToEdgeWrapping
         };
-        for (let key in this.fbos) {
+        for (const key in this.fbos) {
           this.fbos[key] = new THREE.WebGLRenderTarget(this.fboSize.x, this.fboSize.y, opts);
         }
       }
@@ -842,7 +920,7 @@ export default function LiquidEther({
       }
       resize() {
         this.calcSize();
-        for (let key in this.fbos) {
+        for (const key in this.fbos) {
           this.fbos[key].setSize(this.fboSize.x, this.fboSize.y);
         }
       }
@@ -923,7 +1001,7 @@ export default function LiquidEther({
       constructor(props) {
         this.props = props;
         Common.init(props.$wrapper);
-        Mouse.init(props.$wrapper);
+        Mouse.init(props.$wrapper, props.eventTarget, props.useGlobalListeners ? 'global' : 'container');
         Mouse.autoIntensity = props.autoIntensity;
         Mouse.takeoverDuration = props.takeoverDuration;
         this.lastUserInteraction = performance.now();
@@ -1003,14 +1081,13 @@ export default function LiquidEther({
     container.style.position = container.style.position || 'relative';
     container.style.overflow = container.style.overflow || 'hidden';
 
+    const eventTarget = useGlobalListeners && typeof window !== 'undefined' ? window : container;
+
     const webgl = new WebGLManager({
       $wrapper: container,
-      autoDemo,
-      autoSpeed,
-      autoIntensity,
-      takeoverDuration,
-      autoResumeDelay,
-      autoRampDuration
+      ...autoOptionsRef.current,
+      eventTarget,
+      useGlobalListeners
     });
     webglRef.current = webgl;
 
@@ -1019,19 +1096,20 @@ export default function LiquidEther({
       const sim = webglRef.current.output?.simulation;
       if (!sim) return;
       const prevRes = sim.options.resolution;
+      const options = simOptionsRef.current;
       Object.assign(sim.options, {
-        mouse_force: mouseForce,
-        cursor_size: cursorSize,
-        isViscous,
-        viscous,
-        iterations_viscous: iterationsViscous,
-        iterations_poisson: iterationsPoisson,
-        dt,
-        BFECC,
-        resolution,
-        isBounce
+        mouse_force: options.mouseForce,
+        cursor_size: options.cursorSize,
+        isViscous: options.isViscous,
+        viscous: options.viscous,
+        iterations_viscous: options.iterationsViscous,
+        iterations_poisson: options.iterationsPoisson,
+        dt: options.dt,
+        BFECC: options.BFECC,
+        resolution: options.resolution,
+        isBounce: options.isBounce
       });
-      if (resolution !== prevRes) {
+      if (options.resolution !== prevRes) {
         sim.resize();
       }
     };
@@ -1093,7 +1171,7 @@ export default function LiquidEther({
       }
       paletteTextureRef.current = null;
     };
-  }, []);
+  }, [useGlobalListeners]);
 
   useEffect(() => {
     if (!webglRef.current) return;
