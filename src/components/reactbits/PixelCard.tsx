@@ -24,8 +24,8 @@ export const PixelCard = ({
   return (
     <div
       className={cn(
-        "group relative block overflow-hidden rounded-2xl border border-border/80 bg-card/70 backdrop-blur-xl",
-        "transition-all duration-500 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_25px_45px_-20px_rgba(76,0,130,0.35)]",
+        "group relative block overflow-hidden rounded-2xl bg-surface-1 shadow-inset backdrop-blur-xl",
+        "transition-all duration-500 hover:-translate-y-2 hover:shadow-lg",
         className,
       )}
     >

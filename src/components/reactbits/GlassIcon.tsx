@@ -13,7 +13,7 @@ export const GlassIcon = ({ icon, title, description, href, className }: GlassIc
   const content = (
     <div
       className={cn(
-        "group relative flex items-center gap-4 rounded-2xl border border-border/70 bg-card/70 p-4",
+        "group relative flex items-center gap-4 rounded-2xl border border-border/70 bg-surface-2/70 p-4",
         "backdrop-blur-xl transition-all duration-300 hover:border-primary/50 hover:shadow-[0_15px_35px_-20px_rgba(76,0,130,0.4)]",
         className,
       )}

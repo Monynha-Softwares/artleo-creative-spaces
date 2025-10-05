@@ -100,15 +100,17 @@ const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, redu
     <div
       ref={itemRef}
       className={cn(
-        "group relative flex-1 overflow-hidden border-t border-border/40 text-center first:border-t-0",
-        isActive ? "bg-white/5" : undefined,
+        "group relative flex-1 overflow-hidden bg-surface-0 text-center shadow-inset transition-colors",
+        isActive
+          ? "bg-surface-2 shadow-[0_-8px_24px_rgba(99,102,241,0.35)] before:pointer-events-none before:absolute before:inset-x-6 before:top-0 before:h-1 before:bg-[linear-gradient(to_bottom,rgba(255,255,255,0.45),transparent)] before:content-['']"
+          : undefined,
       )}
     >
       <Link
         to={href}
         className={cn(
-          "flex h-full min-h-[64px] w-full items-center justify-center px-6 py-4 text-lg font-semibold uppercase transition-colors", 
-          isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
+          "flex h-full min-h-[64px] w-full items-center justify-center px-6 py-4 text-lg font-semibold uppercase transition-colors",
+          isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
         )}
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
@@ -135,7 +137,7 @@ export const FlowingMenu: React.FC<FlowingMenuProps> = ({ items, activeHref, onI
 
   return (
     <div className={cn("w-full overflow-hidden", className)}>
-      <nav className="flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card/80 backdrop-blur-xl">
+      <nav className="flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-surface-1/80 backdrop-blur-xl">
         {items.map((item) => (
           <MenuItem
             key={item.href}

@@ -63,7 +63,7 @@ const ArtworkDetail = () => {
           {/* Image */}
           <SectionReveal>
             <div className="lg:sticky lg:top-24">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-card border border-border shadow-card">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-surface-2 shadow-lg">
                 <img
                   src={artwork.cover_url}
                   alt={artwork.title}

@@ -59,6 +59,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        surface: {
+          0: "hsl(var(--surface-0))",
+          1: "hsl(var(--surface-1))",
+          2: "hsl(var(--surface-2))",
+          3: "hsl(var(--surface-3))",
+        },
       },
       backgroundImage: {
         "gradient-primary": "var(--gradient-primary)",
@@ -67,6 +73,9 @@ export default {
         topGlow: "var(--top-glow)",
       },
       boxShadow: {
+        sm: "var(--shadow-sm)",
+        lg: "var(--shadow-lg)",
+        inset: "var(--shadow-inset)",
         glow: "var(--shadow-glow)",
         depthSm: "var(--shadow-depth-sm)",
         depth: "var(--shadow-depth)",

@@ -27,7 +27,7 @@ export const StepperTimeline = ({ steps, className }: StepperTimelineProps) => {
             whileInView={reduceMotion ? undefined : { opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="relative flex items-start gap-6 rounded-2xl border border-border/70 bg-card/60 p-6 backdrop-blur-xl"
+            className="relative flex items-start gap-6 rounded-2xl border border-border/70 bg-surface-2/60 p-6 backdrop-blur-xl"
           >
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/80 to-secondary/70 text-sm font-semibold text-primary-foreground shadow-[0_8px_24px_rgba(104,99,255,0.35)]">
               <span>{step.indicator ?? index + 1}</span>
