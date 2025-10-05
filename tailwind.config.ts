@@ -23,6 +23,12 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        surface: {
+          0: "hsl(var(--surface-0))",
+          1: "hsl(var(--surface-1))",
+          2: "hsl(var(--surface-2))",
+          3: "hsl(var(--surface-3))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -63,13 +69,17 @@ export default {
         "gradient-primary": "var(--gradient-primary)",
         "gradient-glow": "var(--gradient-glow)",
         "gradient-mesh": "var(--gradient-mesh)",
+        topGlow: "var(--top-glow)",
       },
       boxShadow: {
         sm: "var(--shadow-sm)",
         lg: "var(--shadow-lg)",
         inset: "var(--shadow-inset)",
         glow: "var(--shadow-glow)",
+        depthSm: "var(--shadow-depth-sm)",
         depth: "var(--shadow-depth)",
+        depthLg: "var(--shadow-depth-lg)",
+        insetDepth: "var(--shadow-inset-depth)",
         card: "var(--shadow-card)",
       },
       transitionTimingFunction: {
