@@ -54,8 +54,7 @@ export default function LiquidEther({
   autoIntensity = 2.2,
   takeoverDuration = 0.25,
   autoResumeDelay = 3000,
-  autoRampDuration = 0.6,
-  useGlobalPointerEvents = true
+  autoRampDuration = 0.6
 }) {
   const mountRef = useRef(null);
   const webglRef = useRef(null);
@@ -141,8 +140,6 @@ export default function LiquidEther({
         this.diff = new THREE.Vector2();
         this.timer = null;
         this.container = null;
-        this.eventTarget = null;
-        this.useGlobalPointerEvents = false;
         this._onMouseMove = this.onDocumentMouseMove.bind(this);
         this._onTouchStart = this.onDocumentTouchStart.bind(this);
         this._onTouchMove = this.onDocumentTouchMove.bind(this);
@@ -160,32 +157,23 @@ export default function LiquidEther({
         this.takeoverTo = new THREE.Vector2();
         this.onInteract = null;
       }
-      init(container, useGlobalPointerEvents = false) {
+      init(container) {
         this.container = container;
-        this.useGlobalPointerEvents = useGlobalPointerEvents;
-        const target = useGlobalPointerEvents ? window : container;
-        this.eventTarget = target;
-        if (!target) return;
-        target.addEventListener('mousemove', this._onMouseMove, false);
-        target.addEventListener('touchstart', this._onTouchStart, false);
-        target.addEventListener('touchmove', this._onTouchMove, false);
-        target.addEventListener('touchend', this._onTouchEnd, false);
-        if (!useGlobalPointerEvents && container) {
-          container.addEventListener('mouseenter', this._onMouseEnter, false);
-          container.addEventListener('mouseleave', this._onMouseLeave, false);
-        }
+        container.addEventListener('mousemove', this._onMouseMove, false);
+        container.addEventListener('touchstart', this._onTouchStart, false);
+        container.addEventListener('touchmove', this._onTouchMove, false);
+        container.addEventListener('mouseenter', this._onMouseEnter, false);
+        container.addEventListener('mouseleave', this._onMouseLeave, false);
+        container.addEventListener('touchend', this._onTouchEnd, false);
       }
       dispose() {
-        if (this.eventTarget) {
-          this.eventTarget.removeEventListener('mousemove', this._onMouseMove, false);
-          this.eventTarget.removeEventListener('touchstart', this._onTouchStart, false);
-          this.eventTarget.removeEventListener('touchmove', this._onTouchMove, false);
-          this.eventTarget.removeEventListener('touchend', this._onTouchEnd, false);
-        }
-        if (!this.useGlobalPointerEvents && this.container) {
-          this.container.removeEventListener('mouseenter', this._onMouseEnter, false);
-          this.container.removeEventListener('mouseleave', this._onMouseLeave, false);
-        }
+        if (!this.container) return;
+        this.container.removeEventListener('mousemove', this._onMouseMove, false);
+        this.container.removeEventListener('touchstart', this._onTouchStart, false);
+        this.container.removeEventListener('touchmove', this._onTouchMove, false);
+        this.container.removeEventListener('mouseenter', this._onMouseEnter, false);
+        this.container.removeEventListener('mouseleave', this._onMouseLeave, false);
+        this.container.removeEventListener('touchend', this._onTouchEnd, false);
       }
       setCoords(x, y) {
         if (!this.container) return;
@@ -203,21 +191,8 @@ export default function LiquidEther({
         this.coords.set(nx, ny);
         this.mouseMoved = true;
       }
-      updateHoverState(x, y) {
-        if (!this.container) return;
-        const rect = this.container.getBoundingClientRect();
-        const inside =
-          x >= rect.left &&
-          x <= rect.right &&
-          y >= rect.top &&
-          y <= rect.bottom;
-        this.isHoverInside = inside;
-      }
       onDocumentMouseMove(event) {
         if (this.onInteract) this.onInteract();
-        if (typeof event.clientX === 'number' && typeof event.clientY === 'number') {
-          this.updateHoverState(event.clientX, event.clientY);
-        }
         if (this.isAutoActive && !this.hasUserControl && !this.takeoverActive) {
           const rect = this.container.getBoundingClientRect();
           const nx = (event.clientX - rect.left) / rect.width;
@@ -237,7 +212,6 @@ export default function LiquidEther({
         if (event.touches.length === 1) {
           const t = event.touches[0];
           if (this.onInteract) this.onInteract();
-          this.updateHoverState(t.pageX, t.pageY);
           this.setCoords(t.pageX, t.pageY);
           this.hasUserControl = true;
         }
@@ -246,7 +220,6 @@ export default function LiquidEther({
         if (event.touches.length === 1) {
           const t = event.touches[0];
           if (this.onInteract) this.onInteract();
-          this.updateHoverState(t.pageX, t.pageY);
           this.setCoords(t.pageX, t.pageY);
         }
       }
@@ -950,7 +923,7 @@ export default function LiquidEther({
       constructor(props) {
         this.props = props;
         Common.init(props.$wrapper);
-        Mouse.init(props.$wrapper, props.useGlobalPointerEvents);
+        Mouse.init(props.$wrapper);
         Mouse.autoIntensity = props.autoIntensity;
         Mouse.takeoverDuration = props.takeoverDuration;
         this.lastUserInteraction = performance.now();
@@ -1037,8 +1010,7 @@ export default function LiquidEther({
       autoIntensity,
       takeoverDuration,
       autoResumeDelay,
-      autoRampDuration,
-      useGlobalPointerEvents
+      autoRampDuration
     });
     webglRef.current = webgl;
 
