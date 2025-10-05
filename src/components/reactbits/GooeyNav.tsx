@@ -38,16 +38,29 @@ export const GooeyNav = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6">
       <nav
-        className="mx-auto flex w-full max-w-5xl items-center justify-between gap-2 rounded-full border border-border/70 bg-background/70 px-4 py-2 backdrop-blur-xl motion-reduce:transition-none min-h-[3.5rem]"
+        className={cn(
+          "mx-auto flex w-full max-w-5xl rounded-full border border-border/70 bg-background/70 px-4 py-2 backdrop-blur-xl motion-reduce:transition-none min-h-[3.5rem] md:flex-row md:items-center md:justify-between",
+          open ? "flex-col items-stretch gap-y-3" : "flex-row items-center gap-2 justify-between",
+        )}
       >
-        <Link
-          to="/"
-          className="flex min-w-0 items-center gap-2 py-2"
-        >
-          <span className="whitespace-nowrap text-[clamp(1.1rem,4vw,1.5rem)] font-semibold text-foreground">
-            Art Leo
-          </span>
-        </Link>
+        <div className="flex w-full items-center justify-between">
+          <Link
+            to="/"
+            className="flex min-w-0 items-center gap-2 py-2"
+          >
+            <span className="whitespace-nowrap text-[clamp(1.1rem,4vw,1.5rem)] font-semibold text-foreground">
+              Art Leo
+            </span>
+          </Link>
+          <button
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-card/70 p-2 text-foreground motion-reduce:transition-none md:hidden"
+            onClick={() => setOpen((prev) => !prev)}
+            aria-label="Toggle navigation"
+            aria-expanded={open}
+          >
+            {open ? <X /> : <Menu />}
+          </button>
+        </div>
         <div className="hidden items-center gap-4 md:flex">
           {links.map((link) => (
             <motion.div key={link.href} className="relative">
@@ -72,15 +85,6 @@ export const GooeyNav = () => {
               </motion.div>
             ))}
           </div>
-        <button
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-card/70 p-2 text-foreground motion-reduce:transition-none md:hidden"
-          onClick={() => setOpen((prev) => !prev)}
-          aria-label="Toggle navigation"
-          aria-expanded={open}
-        >
-            {open ? <X /> : <Menu />}
-        </button>
-
         <AnimatePresence>
           {open && (
             <motion.div
@@ -88,7 +92,7 @@ export const GooeyNav = () => {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.21, 1, 0.29, 1] }}
-              className="mt-3 w-full md:hidden"
+              className="mt-3 w-full basis-full flex-shrink-0 md:hidden"
             >
               <FlowingMenu
                 items={links}
