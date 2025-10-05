@@ -101,7 +101,7 @@ const Home = () => {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {FEATURED_DISCIPLINES.map((item, index) => (
               <SectionReveal key={index} delay={index * 0.1}>
-                <SpotlightCard className="p-6 sm:p-8">
+                <SpotlightCard className="bg-surface-3/90 p-6 sm:p-8">
                   <div className="flex flex-col gap-3 text-left sm:gap-4">
                     <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                       <item.icon className="h-7 w-7" />
