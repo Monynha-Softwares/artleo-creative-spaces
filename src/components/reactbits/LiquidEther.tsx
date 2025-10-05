@@ -155,22 +155,23 @@ export default function LiquidEther({
         this.takeoverFrom = new THREE.Vector2();
         this.takeoverTo = new THREE.Vector2();
         this.onInteract = null;
+        this.eventListenerOptions = { passive: true };
       }
       init(container) {
         this.container = container;
         if (typeof window === 'undefined') return;
         this.eventTarget = window;
-        this.eventTarget.addEventListener('mousemove', this._onMouseMove, { passive: true });
-        this.eventTarget.addEventListener('touchstart', this._onTouchStart, { passive: true });
-        this.eventTarget.addEventListener('touchmove', this._onTouchMove, { passive: true });
-        this.eventTarget.addEventListener('touchend', this._onTouchEnd, { passive: true });
+        this.eventTarget.addEventListener('mousemove', this._onMouseMove, this.eventListenerOptions);
+        this.eventTarget.addEventListener('touchstart', this._onTouchStart, this.eventListenerOptions);
+        this.eventTarget.addEventListener('touchmove', this._onTouchMove, this.eventListenerOptions);
+        this.eventTarget.addEventListener('touchend', this._onTouchEnd, this.eventListenerOptions);
       }
       dispose() {
         if (!this.eventTarget) return;
-        this.eventTarget.removeEventListener('mousemove', this._onMouseMove, false);
-        this.eventTarget.removeEventListener('touchstart', this._onTouchStart, false);
-        this.eventTarget.removeEventListener('touchmove', this._onTouchMove, false);
-        this.eventTarget.removeEventListener('touchend', this._onTouchEnd, false);
+        this.eventTarget.removeEventListener('mousemove', this._onMouseMove, this.eventListenerOptions);
+        this.eventTarget.removeEventListener('touchstart', this._onTouchStart, this.eventListenerOptions);
+        this.eventTarget.removeEventListener('touchmove', this._onTouchMove, this.eventListenerOptions);
+        this.eventTarget.removeEventListener('touchend', this._onTouchEnd, this.eventListenerOptions);
       }
       setCoords(x, y) {
         if (!this.container) return;
