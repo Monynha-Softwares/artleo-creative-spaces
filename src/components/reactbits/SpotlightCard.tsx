@@ -36,8 +36,11 @@ export const SpotlightCard = ({
         mouseY.set(0);
       }}
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-border/70 bg-surface-2/80 p-8 backdrop-blur-xl transition-shadow",
-        "shadow-[0_25px_45px_-20px_rgba(76,0,130,0.35)]",
+        "group relative overflow-hidden rounded-2xl bg-surface-1 p-8 shadow-sm backdrop-blur-xl transition-all duration-300",
+        "before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-1/2 before:rounded-t-2xl",
+        "before:bg-gradient-to-b before:from-white/20 before:via-white/10 before:to-transparent before:opacity-40 before:transition-opacity before:duration-300 before:content-[''] before:mix-blend-screen",
+        "group-hover:before:opacity-80",
+        "hover:shadow-lg",
         className,
       )}
     >
