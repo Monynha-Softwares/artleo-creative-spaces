@@ -1,62 +1,65 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Hero3D } from "@/components/Hero3D";
 import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowRight, Sparkles, Palette, Eye } from "lucide-react";
 import { motion } from "framer-motion";
+import { SilkBackground } from "@/components/reactbits/SilkBackground";
+import { SplitText } from "@/components/reactbits/SplitText";
+import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
+
+const FEATURED_DISCIPLINES = [
+  { icon: Palette, title: "Motion Design", desc: "Dynamic visual narratives" },
+  { icon: Eye, title: "3D Art", desc: "Immersive spatial experiences" },
+  { icon: Sparkles, title: "Interactive", desc: "Engaging digital installations" },
+] as const;
 
 const Home = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* 3D Background */}
-        <Hero3D />
-        
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-mesh" />
-        
+      <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 sm:px-6">
+        <SilkBackground />
+
         {/* Content */}
-        <div className="relative z-10 container mx-auto px-4 text-center">
+        <div className="relative z-10 mx-auto w-full max-w-4xl text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+            className="motion-reduce:scale-100 motion-reduce:transition-none"
           >
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 1 }}
-              className="mb-6"
+              className="mb-6 motion-reduce:animate-none"
             >
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 backdrop-blur-md border border-border/50 text-fluid-sm text-muted-foreground">
-                <Sparkles className="w-4 h-4 text-primary" />
+              <span className="inline-flex flex-wrap items-center gap-2 rounded-full border border-border/50 bg-card/50 px-3 py-1 text-[clamp(0.85rem,3.2vw,0.95rem)] text-muted-foreground backdrop-blur-md whitespace-normal">
+                <Sparkles className="h-4 w-4 text-primary" />
                 Digital Artist & Creative Developer
               </span>
             </motion.div>
 
-            <h1 className="text-fluid-5xl font-bold mb-6 leading-tight">
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Leonardo Silva
-              </span>
-              <br />
-              <span className="text-foreground">Crafting Visual Stories</span>
-            </h1>
+            <SplitText
+              as="h1"
+              text={["Leonardo Silva", "Crafting Visual Stories"].join("\n")}
+              className="mb-6 text-[clamp(2.25rem,8vw,3.75rem)] font-bold leading-[1.1] break-words text-balance"
+            />
 
-            <p className="text-fluid-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className="mx-auto mb-8 max-w-2xl text-[clamp(1rem,3.4vw,1.15rem)] text-muted-foreground leading-relaxed text-balance">
               Exploring the intersection of art, technology, and emotion through
               immersive 3D experiences and motion design.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link to="/portfolio">
-                <Button variant="hero" size="lg" className="group">
+            <div className="flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
+              <Link to="/portfolio" className="w-full sm:w-auto">
+                <Button variant="hero" size="lg" className="group w-full">
                   Explore Portfolio
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Link to="/contact">
-                <Button variant="glass" size="lg">
+              <Link to="/contact" className="w-full sm:w-auto">
+                <Button variant="glass" size="lg" className="w-full">
                   Get in Touch
                 </Button>
               </Link>
@@ -69,55 +72,60 @@ const Home = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 motion-reduce:animate-none"
         >
-          <div className="w-6 h-10 rounded-full border-2 border-border/50 flex items-start justify-center p-2">
+          <div className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-border/50 p-2">
             <motion.div
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1.5 h-1.5 rounded-full bg-primary"
+              className="h-1.5 w-1.5 rounded-full bg-primary motion-reduce:animate-none"
             />
           </div>
         </motion.div>
       </section>
 
       {/* Featured Work Preview */}
-      <section className="py-24 bg-gradient-to-b from-background to-card/20">
-        <div className="container mx-auto px-4">
+      <section className="bg-gradient-to-b from-background to-card/20 py-16 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <SectionReveal>
             <div className="text-center mb-16">
-              <h2 className="text-fluid-4xl font-bold mb-4">
+              <h2 className="mb-4 text-[clamp(1.85rem,6vw,3.25rem)] font-bold leading-tight text-balance">
                 Featured <span className="bg-gradient-primary bg-clip-text text-transparent">Works</span>
               </h2>
-              <p className="text-fluid-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="mx-auto max-w-2xl text-[clamp(1rem,3.4vw,1.15rem)] text-muted-foreground leading-relaxed text-balance">
                 A curated selection of recent projects blending artistry with technology
               </p>
             </div>
           </SectionReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { icon: Palette, title: "Motion Design", desc: "Dynamic visual narratives" },
-              { icon: Eye, title: "3D Art", desc: "Immersive spatial experiences" },
-              { icon: Sparkles, title: "Interactive", desc: "Engaging digital installations" },
-            ].map((item, index) => (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {FEATURED_DISCIPLINES.map((item, index) => (
               <SectionReveal key={index} delay={index * 0.1}>
-                <div className="group relative p-8 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-card">
-                  <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity" />
-                  <item.icon className="w-12 h-12 text-primary mb-4" />
-                  <h3 className="text-fluid-xl font-bold mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.desc}</p>
-                </div>
+                <SpotlightCard className="p-6 sm:p-8">
+                  <div className="flex flex-col gap-3 text-left sm:gap-4">
+                    <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <item.icon className="h-7 w-7" />
+                    </div>
+                    <div>
+                      <h3 className="mb-1 text-[clamp(1.25rem,4.5vw,1.75rem)] font-bold leading-snug text-balance">
+                        {item.title}
+                      </h3>
+                      <p className="text-[clamp(1rem,3.2vw,1.1rem)] text-muted-foreground leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                </SpotlightCard>
               </SectionReveal>
             ))}
           </div>
 
           <SectionReveal delay={0.3}>
-            <div className="text-center mt-12">
+            <div className="mt-12 text-center">
               <Link to="/portfolio">
-                <Button variant="outline" size="lg">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto">
                   View All Work
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
             </div>
