@@ -141,11 +141,14 @@ export default function LiquidEther({
         this.timer = null;
         this.container = null;
         this._onMouseMove = this.onDocumentMouseMove.bind(this);
-        this._onTouchStart = this.onDocumentTouchStart.bind(this);
-        this._onTouchMove = this.onDocumentTouchMove.bind(this);
-        this._onMouseEnter = this.onMouseEnter.bind(this);
-        this._onMouseLeave = this.onMouseLeave.bind(this);
-        this._onTouchEnd = this.onTouchEnd.bind(this);
+    this._onTouchStart = this.onDocumentTouchStart.bind(this);
+    this._onTouchMove = this.onDocumentTouchMove.bind(this);
+    this._onMouseEnter = this.onMouseEnter.bind(this);
+    this._onMouseLeave = this.onMouseLeave.bind(this);
+    this._onTouchEnd = this.onTouchEnd.bind(this);
+    this._onWindowMouseMove = null;
+    this._onWindowTouchMove = null;
+    this._onWindowTouchStart = null;
         this.isHoverInside = false;
         this.hasUserControl = false;
         this.isAutoActive = false;
@@ -165,6 +168,14 @@ export default function LiquidEther({
         container.addEventListener('mouseenter', this._onMouseEnter, false);
         container.addEventListener('mouseleave', this._onMouseLeave, false);
         container.addEventListener('touchend', this._onTouchEnd, false);
+        if (typeof window !== 'undefined') {
+          this._onWindowMouseMove = event => this.onDocumentMouseMove(event);
+          this._onWindowTouchMove = event => this.onDocumentTouchMove(event);
+          this._onWindowTouchStart = event => this.onDocumentTouchStart(event);
+          window.addEventListener('mousemove', this._onWindowMouseMove, { passive: true });
+          window.addEventListener('touchmove', this._onWindowTouchMove, { passive: true });
+          window.addEventListener('touchstart', this._onWindowTouchStart, { passive: true });
+        }
       }
       dispose() {
         if (!this.container) return;
@@ -174,6 +185,14 @@ export default function LiquidEther({
         this.container.removeEventListener('mouseenter', this._onMouseEnter, false);
         this.container.removeEventListener('mouseleave', this._onMouseLeave, false);
         this.container.removeEventListener('touchend', this._onTouchEnd, false);
+        if (typeof window !== 'undefined') {
+          if (this._onWindowMouseMove)
+            window.removeEventListener('mousemove', this._onWindowMouseMove);
+          if (this._onWindowTouchMove)
+            window.removeEventListener('touchmove', this._onWindowTouchMove);
+          if (this._onWindowTouchStart)
+            window.removeEventListener('touchstart', this._onWindowTouchStart);
+        }
       }
       setCoords(x, y) {
         if (!this.container) return;

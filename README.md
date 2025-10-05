@@ -18,7 +18,7 @@ Art Leo is a Vite + React portfolio that pairs cinematic motion design with inte
 - [Tailwind CSS](https://tailwindcss.com/) with custom fluid token scales
 - [shadcn/ui](https://ui.shadcn.com/) component primitives
 - Animation libraries: [Framer Motion](https://www.framer.com/motion/) and [GSAP](https://gsap.com/)
-- React Bits-inspired bespoke components (`SilkBackground`, `FlowingMenu`, `SpotlightCard`, etc.)
+- React Bits-inspired bespoke components (`LiquidEtherBackground`, `FlowingMenu`, `SpotlightCard`, etc.)
 
 ## Getting started
 
@@ -65,7 +65,7 @@ Linting ensures TypeScript, React, and accessibility conventions stay consistent
 ├── public/                # Static assets served as-is
 ├── src/
 │   ├── components/
-│   │   ├── reactbits/     # Custom animated UI primitives (FlowingMenu, SilkBackground, ...)
+│   │   ├── reactbits/     # Custom animated UI primitives (FlowingMenu, LiquidEtherBackground, ...)
 │   │   ├── ui/            # shadcn/ui components
 │   │   ├── Hero3D.tsx     # Legacy hero Three.js field (currently unused but kept for reference)
 │   │   └── SectionReveal.tsx

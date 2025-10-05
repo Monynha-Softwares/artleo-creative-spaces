@@ -39,7 +39,11 @@ export const useContactForm = () => {
           },
         ]);
 
-      if (error) throw error;
+      if (error) {
+        throw new Error(error.message || "Unable to submit your message right now.");
+      }
+
+      return validatedData;
     },
   });
 };

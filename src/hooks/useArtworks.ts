@@ -28,7 +28,7 @@ export const useArtworks = (options: UseArtworksOptions = {}) => {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
 
       // Client-side search filtering
       let filteredData = data || [];

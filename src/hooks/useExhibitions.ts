@@ -11,7 +11,7 @@ export const useExhibitions = () => {
         .order("year", { ascending: false })
         .order("display_order", { ascending: true });
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
       return data || [];
     },
   });
