@@ -4,6 +4,7 @@ import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowRight, Sparkles, Palette, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import { SilkBackground } from "@/components/reactbits/SilkBackground";
+import LiquidEtherBackground from "@/components/reactbits/LiquidEtherBackground";
 import { SplitText } from "@/components/reactbits/SplitText";
 import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
 
@@ -13,12 +14,14 @@ const FEATURED_DISCIPLINES = [
   { icon: Sparkles, title: "Interactive", desc: "Engaging digital installations" },
 ] as const;
 
+const USE_SILK_BACKGROUND = false;
+
 const Home = () => {
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 sm:px-6">
-        <SilkBackground />
+        {USE_SILK_BACKGROUND ? <SilkBackground /> : <LiquidEtherBackground />}
 
         {/* Content */}
         <div className="relative z-10 mx-auto w-full max-w-4xl text-center">
