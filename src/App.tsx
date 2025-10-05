@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Navigation } from "./components/Navigation";
 import { ScrollToTop } from "./components/ScrollToTop";
+import LiquidEtherBackground from "@/components/reactbits/LiquidEtherBackground";
 import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import ArtworkDetail from "./pages/ArtworkDetail";
@@ -24,16 +25,28 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
-          <Navigation />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/art/:slug" element={<ArtworkDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
+            <div className="pointer-events-none fixed inset-0 -z-10">
+              {/*
+                The Liquid Ether background lives here so every public route inherits it.
+                To disable it for a specific page in the future, read `useLocation()` and
+                conditionally render this block based on the current pathname.
+              */}
+              <LiquidEtherBackground />
+            </div>
+            <Navigation />
+            <main className="relative z-0 flex-1">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/art/:slug" element={<ArtworkDetail />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
