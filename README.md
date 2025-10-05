@@ -59,6 +59,36 @@ npm run lint
 
 Linting ensures TypeScript, React, and accessibility conventions stay consistent.
 
+### Storybook & visual regression testing
+
+```bash
+npm run storybook
+npm run chromatic
+```
+
+- `npm run storybook` bootstraps the component workbench with the new stories for Navigation, SectionReveal e skeletons.
+- `npm run chromatic` envia o Storybook para o Chromatic (defina `CHROMATIC_PROJECT_TOKEN` antes de rodar para habilitar o VRT em CI).
+
+### Playwright & axe-core
+
+```bash
+npm run test:playwright
+npm run test:playwright:update
+npm run test:accessibility
+```
+
+- `npm run test:playwright` executa capturas responsivas (mobile/tablet/desktop) e salva os PNGs em `reports/playwright/<breakpoint>/<rota>.png`.
+- `npm run test:playwright:update` permanece disponível para equipes que prefiram rodar `playwright test --update-snapshots` (Chromatic cobre o VRT principal).
+- `npm run test:accessibility` roda apenas os testes marcados com `@axe` usando axe-core.
+
+### Lighthouse
+
+```bash
+npm run test:lighthouse
+```
+
+O script compila a build de produção, sobe `vite preview` no modo CI e gera relatórios HTML/JSON em `./reports/` usando a configuração `lighthouse.config.js`.
+
 ## Project structure
 
 ```

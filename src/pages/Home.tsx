@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowRight, Sparkles, Palette, Eye } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { SilkBackground } from "@/components/reactbits/SilkBackground";
 import { SplitText } from "@/components/reactbits/SplitText";
 import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
@@ -14,6 +14,8 @@ const FEATURED_DISCIPLINES = [
 ] as const;
 
 const Home = () => {
+  const reduceMotion = useReducedMotion();
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section */}
@@ -23,15 +25,22 @@ const Home = () => {
         {/* Content */}
         <div className="relative z-10 mx-auto w-full max-w-4xl text-center">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={reduceMotion ? undefined : { opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+            transition={
+              reduceMotion
+                ? { duration: 0 }
+                : {
+                    duration: 0.8,
+                    ease: [0.4, 0, 0.2, 1],
+                  }
+            }
             className="motion-reduce:scale-100 motion-reduce:transition-none"
           >
             <motion.div
-              initial={{ opacity: 0 }}
+              initial={reduceMotion ? undefined : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 1 }}
+              transition={reduceMotion ? { duration: 0 } : { delay: 0.3, duration: 1 }}
               className="mb-6 motion-reduce:animate-none"
             >
               <span className="inline-flex flex-wrap items-center gap-2 rounded-full border border-border/50 bg-card/50 px-3 py-1 text-[clamp(0.85rem,3.2vw,0.95rem)] text-muted-foreground backdrop-blur-md whitespace-normal">
@@ -69,15 +78,19 @@ const Home = () => {
 
         {/* Scroll Indicator */}
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={reduceMotion ? undefined : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
+          transition={reduceMotion ? { duration: 0 } : { delay: 1.5, duration: 1 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 motion-reduce:animate-none"
         >
           <div className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-border/50 p-2">
             <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              animate={reduceMotion ? { y: 0 } : { y: [0, 12, 0] }}
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+              }
               className="h-1.5 w-1.5 rounded-full bg-primary motion-reduce:animate-none"
             />
           </div>
