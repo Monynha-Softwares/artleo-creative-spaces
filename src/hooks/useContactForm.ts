@@ -1,5 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 import { z } from "zod";
 
 export const contactSchema = z.object({
@@ -22,24 +23,37 @@ export const contactSchema = z.object({
 
 export type ContactFormData = z.infer<typeof contactSchema>;
 
-export const useContactForm = () => {
-  return useMutation({
-    mutationFn: async (formData: ContactFormData) => {
-      // Validate data
-      const validatedData = contactSchema.parse(formData);
+type ContactMessage = Tables<"contact_messages">;
 
-      const { error } = await supabase
+export const useContactForm = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ContactMessage, Error, ContactFormData>({
+    mutationFn: async (formData) => {
+      const validation = contactSchema.safeParse(formData);
+      if (!validation.success) {
+        const issue = validation.error.issues[0];
+        throw new Error(issue?.message ?? "Invalid form data");
+      }
+
+      const { data, error } = await supabase
         .from("contact_messages")
         .insert([
           {
-            name: validatedData.name,
-            email: validatedData.email,
-            message: validatedData.message,
+            name: validation.data.name,
+            email: validation.data.email,
+            message: validation.data.message,
             status: "unread",
           },
-        ]);
+        ])
+        .select()
+        .single();
 
       if (error) throw error;
+      return data as ContactMessage;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
     },
   });
 };

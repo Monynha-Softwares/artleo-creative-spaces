@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Exhibition = Tables<"exhibitions">;
 
 export const useExhibitions = () => {
-  return useQuery({
+  return useQuery<Exhibition[]>({
     queryKey: ["exhibitions"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -12,7 +15,7 @@ export const useExhibitions = () => {
         .order("display_order", { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      return (data ?? []) as Exhibition[];
     },
   });
 };

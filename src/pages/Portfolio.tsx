@@ -1,14 +1,24 @@
-import { useMemo, useState } from "react";
+import { Suspense, lazy, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
-import { RollingGallery } from "@/components/reactbits/RollingGallery";
-import { PixelCard } from "@/components/reactbits/PixelCard";
 import { useArtworks } from "@/hooks/useArtworks";
 import { ArtworkSkeleton } from "@/components/ArtworkSkeleton";
+
+const RollingGallery = lazy(() =>
+  import("@/components/reactbits/RollingGallery").then((module) => ({
+    default: module.RollingGallery,
+  })),
+);
+
+const PixelCard = lazy(() =>
+  import("@/components/reactbits/PixelCard").then((module) => ({
+    default: module.PixelCard,
+  })),
+);
 
 const categories = ["all", "motion-design", "3d-art", "interactive", "generative"] as const;
 type CategoryFilter = (typeof categories)[number];
@@ -52,17 +62,23 @@ const Portfolio = () => {
 
         {!isLoading && featured.length > 0 && (
           <SectionReveal delay={0.05}>
-            <RollingGallery
-              items={featured.map((item) => ({
-                id: item.id,
-                title: item.title,
-                subtitle: item.category,
-                imageUrl: item.cover_url,
-                href: `/art/${item.slug}`,
-                footer: <span className="text-sm">{item.year}</span>,
-              }))}
-              speed={24}
-            />
+            <Suspense
+              fallback={
+                <div className="h-[320px] w-full animate-pulse rounded-[2.5rem] bg-surface-2/50" aria-hidden />
+              }
+            >
+              <RollingGallery
+                items={featured.map((item) => ({
+                  id: item.id,
+                  title: item.title,
+                  subtitle: item.category,
+                  imageUrl: item.cover_url,
+                  href: `/art/${item.slug}`,
+                  footer: <span className="text-sm">{item.year}</span>,
+                }))}
+                speed={24}
+              />
+            </Suspense>
           </SectionReveal>
         )}
 
@@ -120,12 +136,14 @@ const Portfolio = () => {
                 transition={{ duration: 0.4, delay: index * 0.05 }}
               >
                 <Link to={`/art/${artwork.slug}`} className="block">
-                  <PixelCard
-                    imageUrl={artwork.cover_url}
-                    title={artwork.title}
-                    subtitle={artwork.category}
-                    footer={<span className="text-sm">{artwork.year}</span>}
-                  />
+                  <Suspense fallback={<ArtworkSkeleton />}>
+                    <PixelCard
+                      imageUrl={artwork.cover_url}
+                      title={artwork.title}
+                      subtitle={artwork.category}
+                      footer={<span className="text-sm">{artwork.year}</span>}
+                    />
+                  </Suspense>
                 </Link>
               </motion.div>
             ))}

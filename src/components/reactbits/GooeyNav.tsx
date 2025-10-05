@@ -85,14 +85,6 @@ export const GooeyNav = () => {
               </motion.div>
             ))}
           </div>
-        <button
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-surface-1/70 p-2 text-foreground motion-reduce:transition-none md:hidden"
-          onClick={() => setOpen((prev) => !prev)}
-          aria-label="Toggle navigation"
-          aria-expanded={open}
-        >
-            {open ? <X /> : <Menu />}
-        </button>
 
         <AnimatePresence>
           {open && (

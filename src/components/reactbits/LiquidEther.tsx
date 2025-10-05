@@ -54,7 +54,8 @@ export default function LiquidEther({
   autoIntensity = 2.2,
   takeoverDuration = 0.25,
   autoResumeDelay = 3000,
-  autoRampDuration = 0.6
+  autoRampDuration = 0.6,
+  eventTarget = null
 }) {
   const mountRef = useRef(null);
   const webglRef = useRef(null);
@@ -65,6 +66,7 @@ export default function LiquidEther({
   const resizeRafRef = useRef(null);
   const paletteTextureRef = useRef(null);
   const paletteKeyRef = useRef('');
+  const eventTargetRef = useRef(null);
 
   const paletteKey = useMemo(() => {
     if (Array.isArray(colors)) return colors.join(',');
@@ -140,6 +142,7 @@ export default function LiquidEther({
         this.diff = new THREE.Vector2();
         this.timer = null;
         this.container = null;
+        this.eventTarget = null;
         this._onMouseMove = this.onDocumentMouseMove.bind(this);
         this._onTouchStart = this.onDocumentTouchStart.bind(this);
         this._onTouchMove = this.onDocumentTouchMove.bind(this);
@@ -157,23 +160,30 @@ export default function LiquidEther({
         this.takeoverTo = new THREE.Vector2();
         this.onInteract = null;
       }
-      init(container) {
+      init(container, eventTarget) {
         this.container = container;
-        container.addEventListener('mousemove', this._onMouseMove, false);
-        container.addEventListener('touchstart', this._onTouchStart, false);
-        container.addEventListener('touchmove', this._onTouchMove, false);
+        const target = eventTarget || container;
+        this.eventTarget = target;
+
+        target.addEventListener('mousemove', this._onMouseMove, false);
+        target.addEventListener('touchstart', this._onTouchStart, false);
+        target.addEventListener('touchmove', this._onTouchMove, false);
+        target.addEventListener('touchend', this._onTouchEnd, false);
+
         container.addEventListener('mouseenter', this._onMouseEnter, false);
         container.addEventListener('mouseleave', this._onMouseLeave, false);
-        container.addEventListener('touchend', this._onTouchEnd, false);
       }
       dispose() {
         if (!this.container) return;
-        this.container.removeEventListener('mousemove', this._onMouseMove, false);
-        this.container.removeEventListener('touchstart', this._onTouchStart, false);
-        this.container.removeEventListener('touchmove', this._onTouchMove, false);
+        const target = this.eventTarget || this.container;
+        target.removeEventListener('mousemove', this._onMouseMove, false);
+        target.removeEventListener('touchstart', this._onTouchStart, false);
+        target.removeEventListener('touchmove', this._onTouchMove, false);
+        target.removeEventListener('touchend', this._onTouchEnd, false);
+
         this.container.removeEventListener('mouseenter', this._onMouseEnter, false);
         this.container.removeEventListener('mouseleave', this._onMouseLeave, false);
-        this.container.removeEventListener('touchend', this._onTouchEnd, false);
+        this.eventTarget = null;
       }
       setCoords(x, y) {
         if (!this.container) return;
@@ -923,7 +933,7 @@ export default function LiquidEther({
       constructor(props) {
         this.props = props;
         Common.init(props.$wrapper);
-        Mouse.init(props.$wrapper);
+        Mouse.init(props.$wrapper, props.eventTarget);
         Mouse.autoIntensity = props.autoIntensity;
         Mouse.takeoverDuration = props.takeoverDuration;
         this.lastUserInteraction = performance.now();
@@ -1003,8 +1013,12 @@ export default function LiquidEther({
     container.style.position = container.style.position || 'relative';
     container.style.overflow = container.style.overflow || 'hidden';
 
+    const pointerTarget = eventTarget || container.parentElement || (typeof window !== 'undefined' ? window : container);
+    eventTargetRef.current = pointerTarget;
+
     const webgl = new WebGLManager({
       $wrapper: container,
+      eventTarget: pointerTarget,
       autoDemo,
       autoSpeed,
       autoIntensity,
@@ -1092,8 +1106,9 @@ export default function LiquidEther({
         paletteTextureRef.current.dispose();
       }
       paletteTextureRef.current = null;
+      eventTargetRef.current = null;
     };
-  }, []);
+  }, [eventTarget]);
 
   useEffect(() => {
     if (!webglRef.current) return;

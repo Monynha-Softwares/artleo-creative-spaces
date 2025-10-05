@@ -1,63 +1,99 @@
-import { useCallback, useState } from "react";
+import { useMemo } from "react";
 import { SectionReveal } from "@/components/SectionReveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Instagram, Send } from "lucide-react";
 import { GlassIcon } from "@/components/reactbits/GlassIcon";
 import { RippleGridBackground } from "@/components/reactbits/RippleGridBackground";
-import { useContactForm } from "@/hooks/useContactForm";
-
-const initialFormState = {
-  name: "",
-  email: "",
-  message: "",
-};
-
-type ContactFormState = typeof initialFormState;
+import { contactSchema, useContactForm, type ContactFormData } from "@/hooks/useContactForm";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const Contact = () => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState<ContactFormState>(initialFormState);
-  const { mutate: submitContact, isPending } = useContactForm();
-
-  const resetForm = useCallback(() => {
-    setFormData(() => ({ ...initialFormState }));
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    submitContact(formData, {
-      onSuccess: () => {
-        toast({
-          title: "Message sent!",
-          description: "Thank you for reaching out. I'll get back to you soon.",
-        });
-        resetForm();
-      },
-      onError: (error) => {
-        toast({
-          title: "Error sending message",
-          description: error.message,
-          variant: "destructive",
-        });
-      },
-    });
-  };
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+  const form = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
     },
-    [],
-  );
+    mode: "onBlur",
+  });
+  const { mutateAsync: submitContact, isPending } = useContactForm();
+  const { data: siteSettings } = useSiteSettings({ keys: ["contact_email", "social_instagram"] });
+
+  const contactEmail = useMemo(() => {
+    const emailSetting = siteSettings?.find((item) => item.key === "contact_email");
+    if (!emailSetting) return "contact@artleo.com";
+
+    if (typeof emailSetting.value === "string") {
+      return emailSetting.value;
+    }
+
+    if (
+      emailSetting.value &&
+      typeof emailSetting.value === "object" &&
+      "email" in emailSetting.value &&
+      typeof emailSetting.value.email === "string"
+    ) {
+      return emailSetting.value.email;
+    }
+
+    return "contact@artleo.com";
+  }, [siteSettings]);
+
+  const instagramHandle = useMemo(() => {
+    const instagramSetting = siteSettings?.find((item) => item.key === "social_instagram");
+    if (!instagramSetting) return "@leonardossil";
+
+    if (typeof instagramSetting.value === "string") {
+      return instagramSetting.value;
+    }
+
+    if (
+      instagramSetting.value &&
+      typeof instagramSetting.value === "object" &&
+      "handle" in instagramSetting.value &&
+      typeof instagramSetting.value.handle === "string"
+    ) {
+      return instagramSetting.value.handle;
+    }
+
+    return "@leonardossil";
+  }, [siteSettings]);
+
+  const instagramUrl = useMemo(() => {
+    const trimmed = instagramHandle.trim();
+    if (/^https?:\/\//i.test(trimmed)) {
+      return trimmed;
+    }
+
+    const handle = trimmed.startsWith("@") ? trimmed.slice(1) : trimmed;
+    return `https://www.instagram.com/${handle}`;
+  }, [instagramHandle]);
+
+  const onSubmit = async (values: ContactFormData) => {
+    try {
+      await submitContact(values);
+      toast({
+        title: "Message sent!",
+        description: "Thank you for reaching out. I'll get back to you soon.",
+      });
+      form.reset();
+    } catch (error) {
+      const err = error as Error;
+      toast({
+        title: "Error sending message",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
@@ -95,14 +131,14 @@ const Contact = () => {
                       <GlassIcon
                         icon={<Mail className="h-6 w-6" />}
                         title="Email"
-                        description="contact@artleo.com"
-                        href="mailto:contact@artleo.com"
+                        description={contactEmail}
+                        href={`mailto:${contactEmail}`}
                       />
                       <GlassIcon
                         icon={<Instagram className="h-6 w-6" />}
                         title="Instagram"
-                        description="@leonardossil"
-                        href="https://www.instagram.com/leonardossil/"
+                        description={instagramHandle}
+                        href={instagramUrl}
                       />
                     </div>
                   </div>
@@ -112,64 +148,94 @@ const Contact = () => {
               {/* Contact Form */}
               <div className="col-span-1">
                 <SectionReveal delay={0.2}>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Your name"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="your.email@example.com"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea
-                        id="message"
-                        name="message"
-                        required
-                        value={formData.message}
-                        onChange={handleChange}
-                        placeholder="Tell me about your project or inquiry..."
-                        rows={6}
-                        className="resize-none"
-                      />
-                    </div>
-
-                    <Button
-                      type="submit"
-                      variant="hero"
-                      size="lg"
-                      className="w-full motion-reduce:transition-none"
-                      disabled={isPending}
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-6"
+                      noValidate
                     >
-                      {isPending ? (
-                        "Sending..."
-                      ) : (
-                        <>
-                          Send Message
-                          <Send className="w-5 h-5 ml-2" />
-                        </>
-                      )}
-                    </Button>
-                  </form>
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel htmlFor="name">Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                id="name"
+                                placeholder="Your name"
+                                autoComplete="name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel htmlFor="email">Email</FormLabel>
+                            <FormControl>
+                              <Input
+                                id="email"
+                                type="email"
+                                placeholder="your.email@example.com"
+                                autoComplete="email"
+                                inputMode="email"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="message"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel htmlFor="message">Message</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                id="message"
+                                placeholder="Tell me about your project or inquiry..."
+                                rows={6}
+                                className="resize-none"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button
+                        type="submit"
+                        variant="hero"
+                        size="lg"
+                        className="w-full motion-reduce:transition-none"
+                        disabled={isPending}
+                        aria-busy={isPending}
+                      >
+                        {isPending ? (
+                          "Sending..."
+                        ) : (
+                          <>
+                            Send Message
+                            <Send className="w-5 h-5 ml-2" aria-hidden />
+                          </>
+                        )}
+                      </Button>
+                      <p className="text-xs text-muted-foreground" aria-live="polite">
+                        I respect your privacy—your information will only be used to respond to this inquiry.
+                      </p>
+                    </form>
+                  </Form>
                 </SectionReveal>
               </div>
             </div>
