@@ -59,35 +59,23 @@ npm run lint
 
 Linting ensures TypeScript, React, and accessibility conventions stay consistent.
 
-### Storybook & visual regression testing
+### Storybook & visual regression
 
-```bash
-npm run storybook
-npm run chromatic
-```
+- `npm run storybook` abre o Storybook com os componentes integrados ao tema do Art Leo.
+- `npm run build-storybook` gera a versão estática em `storybook-static/` para publicação.
+- `npm run chromatic` publica a build no Chromatic (defina `CHROMATIC_PROJECT_TOKEN` nos segredos do CI).
 
-- `npm run storybook` bootstraps the component workbench with the new stories for Navigation, SectionReveal e skeletons.
-- `npm run chromatic` envia o Storybook para o Chromatic (defina `CHROMATIC_PROJECT_TOKEN` antes de rodar para habilitar o VRT em CI).
+### Playwright automation
 
-### Playwright & axe-core
+- `npm run test:e2e` executa toda a suíte Playwright (acessibilidade + capturas).
+- `npm run test:visual` gera screenshots por breakpoint e as anexa ao relatório HTML (`playwright-report/`).
+- `npm run test:axe` roda apenas as verificações do axe-core usando o projeto desktop.
 
-```bash
-npm run test:playwright
-npm run test:playwright:update
-npm run test:accessibility
-```
+### Lighthouse & relatórios de performance
 
-- `npm run test:playwright` executa capturas responsivas (mobile/tablet/desktop) e salva os PNGs em `reports/playwright/<breakpoint>/<rota>.png`.
-- `npm run test:playwright:update` permanece disponível para equipes que prefiram rodar `playwright test --update-snapshots` (Chromatic cobre o VRT principal).
-- `npm run test:accessibility` roda apenas os testes marcados com `@axe` usando axe-core.
+- `npm run test:lighthouse` cria a build, sobe um servidor estático e salva os relatórios JSON/HTML em `./.lighthouse`.
 
-### Lighthouse
-
-```bash
-npm run test:lighthouse
-```
-
-O script compila a build de produção, sobe `vite preview` no modo CI e gera relatórios HTML/JSON em `./reports/` usando a configuração `lighthouse.config.js`.
+Consulte também a documentação de auditoria e checklist em `docs/ui-audit.md` e `docs/ui-checklist.md`.
 
 ## Project structure
 

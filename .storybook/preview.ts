@@ -1,4 +1,4 @@
-import type { Preview } from "@storybook/react-vite";
+import type { Preview } from "@storybook/react";
 import "../src/index.css";
 
 const preview: Preview = {
@@ -9,7 +9,13 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    layout: "fullscreen",
+    backgrounds: {
+      default: "Surface",
+      values: [
+        { name: "Surface", value: "hsl(var(--background))" },
+        { name: "Canvas", value: "#0f172a" },
+      ],
+    },
   },
 };
 

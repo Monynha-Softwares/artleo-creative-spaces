@@ -24,8 +24,8 @@ dist-ssr
 *.sw?
 
 *storybook.log
-storybook-static
-playwright-report
-test-results
-tests/__screenshots__
-reports/playwright
+storybook-static/
+playwright-report/
+test-results/
+.lighthouse/
+playwright/.cache/

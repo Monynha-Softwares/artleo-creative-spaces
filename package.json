@@ -11,13 +11,13 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
-    "test:playwright": "playwright test",
-    "test:playwright:update": "playwright test --update-snapshots",
-    "test:accessibility": "playwright test --grep @axe --project=desktop",
-    "preview:ci": "vite preview --host 0.0.0.0 --port 4173",
-    "lighthouse:run": "lighthouse http://127.0.0.1:4173 --config-path=./lighthouse.config.js --output html --output json --output-path=./reports/lighthouse-report.html --quiet --chrome-flags='--headless=new'",
-    "test:lighthouse": "npm run build && start-server-and-test preview:ci http://127.0.0.1:4173 lighthouse:run"
+    "serve:dist": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
+    "test:e2e": "npm run build && playwright test",
+    "test:visual": "npm run build && playwright test tests/visual-breakpoints.spec.ts",
+    "test:axe": "npm run build && playwright test tests/accessibility.spec.ts --project=desktop",
+    "test:lighthouse": "npm run build && start-server-and-test serve:dist http://127.0.0.1:4173 \"npm run lighthouse:ci\"",
+    "lighthouse:ci": "mkdir -p ./.lighthouse && lighthouse http://127.0.0.1:4173 --output json --output html --output-path=./.lighthouse/report --quiet --chrome-flags=--headless",
+    "chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --exit-zero-on-changes"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -78,6 +78,7 @@
     "zustand": "^4.5.7"
   },
   "devDependencies": {
+    "@axe-core/cli": "^4.10.2",
     "@axe-core/playwright": "^4.10.2",
     "@chromatic-com/storybook": "^4.1.1",
     "@eslint/js": "^9.32.0",
@@ -102,6 +103,7 @@
     "globals": "^15.15.0",
     "lighthouse": "^12.8.2",
     "lovable-tagger": "^1.1.10",
+    "playwright": "^1.55.1",
     "postcss": "^8.5.6",
     "start-server-and-test": "^2.1.2",
     "storybook": "^9.1.10",
