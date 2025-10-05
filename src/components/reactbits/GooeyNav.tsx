@@ -38,7 +38,10 @@ export const GooeyNav = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6">
       <nav
-        className="mx-auto flex w-full max-w-5xl items-center justify-between gap-2 rounded-full border border-border/70 bg-surface-0/70 px-4 py-2 backdrop-blur-xl motion-reduce:transition-none min-h-[3.5rem]"
+        className="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-2 rounded-full bg-surface-1 px-4 py-2 shadow-lg backdrop-blur-xl motion-reduce:transition-none min-h-[3.5rem]"
+        style={{
+          background: "linear-gradient(180deg, hsl(var(--surface-1) / 0.98), hsl(var(--surface-1) / 0.85))",
+        }}
       >
         <Link
           to="/"
