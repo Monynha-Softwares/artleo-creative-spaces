@@ -86,7 +86,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, redu
     () =>
       Array.from({ length: 4 }).map((_, idx) => (
         <React.Fragment key={`${label}-${idx}`}>
-          <span className="text-[#060010] uppercase font-medium text-[4vh] leading-[1.2] px-[1vw]">{label}</span>
+          <span className="text-[color:var(--flowing-menu-text)] uppercase font-medium text-[4vh] leading-[1.2] px-[1vw]">{label}</span>
           <div
             className="min-w-[120px] h-[6vh] my-[1.5vh] mx-[1vw] rounded-[999px] bg-cover bg-center"
             style={accentStyle}
