@@ -65,10 +65,10 @@ const Contact = () => {
         {/* Header */}
         <SectionReveal>
           <div className="mb-14 text-center">
-            <h1 className="mb-4 text-[clamp(2rem,7vw,3.5rem)] font-bold leading-tight text-balance">
+            <h1 className="mb-4 text-[clamp(2rem,7vw,3.5rem)] font-bold leading-tight text-balance drop-shadow-[0_12px_32px_rgba(6,10,28,0.65)]">
               Get in <span className="bg-gradient-primary bg-clip-text text-transparent">Touch</span>
             </h1>
-            <p className="mx-auto max-w-2xl text-[clamp(1rem,3.4vw,1.15rem)] text-white/85 leading-relaxed text-balance">
+            <p className="mx-auto max-w-2xl text-[clamp(1rem,3.4vw,1.15rem)] text-white/90 leading-relaxed text-balance drop-shadow-[0_10px_24px_rgba(5,6,20,0.55)]">
               Have a project in mind or just want to say hello? I'd love to hear from you.
             </p>
           </div>
@@ -81,12 +81,12 @@ const Contact = () => {
               {/* Contact Info */}
               <div className="col-span-1">
                 <SectionReveal delay={0.1}>
-                  <div className="space-y-8">
+                  <div className="space-y-8 text-white drop-shadow-[0_10px_30px_rgba(4,8,24,0.6)]">
                     <div>
                       <h2 className="mb-6 text-[clamp(1.5rem,5.5vw,2.5rem)] font-bold leading-tight text-white">
                         Let's Connect
                       </h2>
-                      <p className="mb-6 text-[clamp(1rem,3.3vw,1.1rem)] text-white/80 leading-relaxed">
+                      <p className="mb-6 text-[clamp(1rem,3.3vw,1.1rem)] text-white/85 leading-relaxed">
                         Whether you're interested in collaborating, commissioning work, or just
                         want to chat about art and technology, feel free to reach out through
                         the form or my social channels.
