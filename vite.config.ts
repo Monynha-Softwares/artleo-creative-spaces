@@ -16,6 +16,33 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("three")) {
+              return "three";
+            }
+            if (id.includes("@react-three")) {
+              return "react-three";
+            }
+            if (id.includes("framer-motion")) {
+              return "framer-motion";
+            }
+            if (id.includes("react-router")) {
+              return "react-router";
+            }
+            if (id.includes("@tanstack/react-query")) {
+              return "react-query";
+            }
+          }
+          return undefined;
+        },
+      },
+    },
+    chunkSizeWarningLimit: 900,
+  },
   test: {
     environment: "jsdom",
     globals: true,

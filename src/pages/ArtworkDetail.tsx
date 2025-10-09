@@ -47,7 +47,7 @@ const ArtworkDetail = () => {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
+    <div className="relative min-h-screen overflow-x-hidden pt-24 pb-24 sm:pb-16">
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         {/* Back Button */}
         <SectionReveal>
@@ -135,16 +135,24 @@ const ArtworkDetail = () => {
               </SectionReveal>
             )}
 
-            <SectionReveal delay={0.4}>
-              <div className="pt-4">
-                <Link to="/contact">
-                  <Button variant="hero" size="lg" className="w-full sm:w-auto">
-                    Inquire About This Work
-                  </Button>
-                </Link>
-              </div>
+            <SectionReveal delay={0.4} className="hidden sm:block pt-4">
+              <Link to="/contact">
+                <Button variant="hero" size="lg" className="min-w-[220px]">
+                  Inquire About This Work
+                </Button>
+              </Link>
             </SectionReveal>
           </div>
+        </div>
+      </div>
+
+      <div className="sm:hidden fixed inset-x-0 bottom-4 z-20 px-4">
+        <div className="rounded-3xl border border-border/60 bg-surface-0/85 p-3 shadow-xl backdrop-blur supports-[backdrop-filter]:bg-surface-0/70">
+          <Link to="/contact" className="block">
+            <Button variant="hero" size="lg" className="w-full h-auto py-4 text-base font-semibold">
+              Inquire About This Work
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

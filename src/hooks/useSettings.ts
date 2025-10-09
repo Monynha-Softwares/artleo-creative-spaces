@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
-interface Setting {
-  key: string;
-  value: any;
-  description?: string;
-}
+type SettingRecord = Database["public"]["Tables"]["settings"]["Row"];
+type SettingValue = SettingRecord["value"];
+
+type SettingsQueryResult = SettingRecord[] | SettingRecord | null;
 
 export const useSettings = (key?: string) => {
-  return useQuery({
+  return useQuery<SettingsQueryResult>({
     queryKey: ["settings", key],
     queryFn: async () => {
       if (!key) {
@@ -18,7 +18,7 @@ export const useSettings = (key?: string) => {
           .eq("is_public", true);
 
         if (error) throw error;
-        return data as Setting[];
+        return data ?? [];
       }
 
       const { data, error } = await supabase
@@ -29,15 +29,24 @@ export const useSettings = (key?: string) => {
         .maybeSingle();
 
       if (error) throw error;
-      return data as Setting | null;
+      return data;
     },
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 10 * 60 * 1000,
     retry: 2,
   });
 };
 
-export const useSiteSetting = (key: string, fallback: any = null) => {
+export const useSiteSetting = <T = SettingValue | null>(key: string, fallback?: T) => {
   const { data } = useSettings(key);
-  if (Array.isArray(data)) return fallback;
-  return data?.value ?? fallback;
+  const resolvedFallback = (fallback ?? null) as T;
+
+  if (!key) {
+    return resolvedFallback;
+  }
+
+  if (!data || Array.isArray(data)) {
+    return resolvedFallback;
+  }
+
+  return (data.value as T | undefined) ?? resolvedFallback;
 };

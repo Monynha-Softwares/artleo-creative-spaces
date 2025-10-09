@@ -25,7 +25,7 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <Navigation />
-          <Routes>
+          <Routes future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
             <Route path="/" element={<Home />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/art/:slug" element={<ArtworkDetail />} />

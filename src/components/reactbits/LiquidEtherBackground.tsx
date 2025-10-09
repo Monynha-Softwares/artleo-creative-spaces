@@ -1,15 +1,15 @@
-import { useMemo } from 'react';
-import { useReducedMotion } from 'framer-motion';
-import LiquidEther from './LiquidEther';
+import { useMemo } from "react";
+import { useReducedMotion } from "framer-motion";
+import LiquidEther from "./LiquidEther";
 
 const fallbackGradient =
-  'radial-gradient(at 20% 20%, rgba(109, 76, 255, 0.25), transparent 55%),' +
-  'radial-gradient(at 80% 10%, rgba(64, 134, 255, 0.18), transparent 60%),' +
-  'radial-gradient(at 50% 80%, rgba(180, 90, 255, 0.12), transparent 55%)';
+  "radial-gradient(at 20% 20%, rgba(109, 76, 255, 0.25), transparent 55%)," +
+  "radial-gradient(at 80% 10%, rgba(64, 134, 255, 0.18), transparent 60%)," +
+  "radial-gradient(at 50% 80%, rgba(180, 90, 255, 0.12), transparent 55%)";
 
 const LiquidEtherBackground = () => {
   const reduceMotion = useReducedMotion();
-  const palette = useMemo(() => ['#5227FF', '#FF9FFC', '#B19EEF'], []);
+  const palette = useMemo(() => ["#5227FF", "#FF9FFC", "#B19EEF"], []);
 
   return (
     <div className="absolute inset-0" role="presentation" aria-hidden>
@@ -25,21 +25,12 @@ const LiquidEtherBackground = () => {
         </div>
       ) : (
         <LiquidEther
+          className="absolute inset-0"
           colors={palette}
-          mouseForce={20}
-          cursorSize={100}
-          isViscous={false}
-          viscous={30}
-          iterationsViscous={32}
-          iterationsPoisson={32}
-          resolution={0.5}
-          isBounce={false}
           autoDemo
           autoSpeed={0.5}
           autoIntensity={2.2}
-          takeoverDuration={0.25}
           autoResumeDelay={3000}
-          autoRampDuration={0.6}
         />
       )}
     </div>
