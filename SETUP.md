@@ -1,11 +1,11 @@
 # Setup Guide
 
-This guide will help you set up the Art Leo portfolio website locally and in production.
+This guide will help you set up the Art Leo portfolio website locally and in production. The project is fully self-managed—no external builder accounts are required.
 
 ## Prerequisites
 
-- Node.js 18+ and npm/bun
-- A Lovable Cloud account (Supabase backend is already configured)
+- Node.js 18+ and npm
+- Supabase project (database + auth already provisioned)
 
 ## Local Development Setup
 
@@ -13,15 +13,13 @@ This guide will help you set up the Art Leo portfolio website locally and in pro
 
 ```bash
 git clone <repository-url>
-cd artleo-creative-spaces-main
+cd artleo-creative-spaces
 npm install
-# or
-bun install
 ```
 
 ### 2. Environment Variables
 
-The `.env` file is automatically configured by Lovable Cloud. It contains:
+Create a `.env` file at the project root with the following variables:
 
 ```env
 VITE_SUPABASE_URL=<your-supabase-url>
@@ -33,55 +31,49 @@ VITE_SUPABASE_PROJECT_ID=<your-project-id>
 
 ### 3. Database Setup
 
-The database schema is already set up via migrations in `supabase/migrations/`. To verify or reset:
+Migrations live in `supabase/migrations/` and can be applied via the Supabase CLI:
 
-1. All migrations are automatically applied by Lovable Cloud
-2. Check migration status in the backend dashboard
+```bash
+supabase db reset
+```
+
+This command recreates the local database, runs migrations, and seeds any sample data defined in `supabase/seed.sql`.
 
 ### 4. Create First Admin User
 
-After signing up through the `/auth` page, you need to manually assign admin role:
+After signing up through the `/auth` page, manually assign the admin role:
 
 1. Sign up with your email at `/auth`
-2. Find your user ID from the profiles table
-3. Run this SQL in the backend dashboard:
+2. Find your user ID from the `profiles` table
+3. Run this SQL in the Supabase SQL Editor:
 
 ```sql
--- Replace 'YOUR_USER_ID' with your actual user ID from profiles table
+-- Replace 'YOUR_USER_ID' with the ID from the profiles table
 INSERT INTO user_roles (user_id, role)
 VALUES ('YOUR_USER_ID', 'admin');
 ```
 
-### 5. Seed Initial Data
-
-The database was seeded during migration with sample content. To add more:
-
-1. Use the backend dashboard to insert data directly
-2. Or create custom seed scripts in `supabase/seed.sql`
-
-### 6. Start Development Server
+### 5. Start Development Server
 
 ```bash
 npm run dev
-# or
-bun dev
 ```
 
-Visit `http://localhost:5173`
+Visit `http://localhost:5173` and log in with your test account.
 
 ## Configuration
 
 ### Authentication Settings
 
-Configure auth settings via Lovable Cloud backend:
+Configure auth settings via the Supabase dashboard:
 
-1. Go to Authentication → Settings
-2. Enable Email provider
-3. Configure Site URL: `https://yourdomain.com`
+1. Authentication → Settings
+2. Enable the Email provider
+3. Set **Site URL**: `https://yourdomain.com`
 4. Add Redirect URLs:
    - `http://localhost:5173` (development)
    - `https://yourdomain.com` (production)
-5. For testing: Disable email confirmation (auto-confirm)
+5. Optional: Enable email confirmations for production
 
 ### Storage Buckets
 
@@ -90,41 +82,36 @@ Two storage buckets are pre-configured:
 - `artwork-images`: Public bucket for portfolio images
 - `general-media`: Public bucket for other media files
 
-Upload images via:
-- Backend dashboard (Storage section)
-- Future admin panel
+Upload images via the Supabase dashboard or the Supabase CLI. Ensure Storage policies grant public read access where needed.
 
 ## Troubleshooting
 
 ### "Requested path is invalid" error on login
 
-**Solution**: Check that Site URL and Redirect URLs are configured correctly in Authentication settings.
+Check that Site URL and Redirect URLs are configured correctly in Authentication settings.
 
 ### Can't see data after inserting
 
-**Solution**: Check RLS policies. Ensure you're logged in as admin to view protected content, or that content is marked as `published` for public access.
+Ensure Row Level Security policies allow access for your role, or mark content as `published` for public visibility.
 
 ### Images not loading
 
-**Solution**: 
-1. Verify bucket is public
-2. Check image URLs use correct format: `<SUPABASE_URL>/storage/v1/object/public/<bucket>/<path>`
-3. Ensure RLS policies on storage.objects allow SELECT
+1. Verify the bucket is public
+2. Confirm image URLs follow `<SUPABASE_URL>/storage/v1/object/public/<bucket>/<path>`
+3. Ensure `storage.objects` policies permit `SELECT`
 
 ### Database connection errors
 
-**Solution**: Verify `.env` file has correct credentials. Restart dev server after env changes.
+Verify `.env` contains the correct credentials. Restart the dev server after env changes.
 
 ## Next Steps
 
 - Read [DATABASE.md](./DATABASE.md) for schema details
-- See [CONTENT_MANAGEMENT.md](./CONTENT_MANAGEMENT.md) for content editing
-- Check [DEPLOYMENT.md](./DEPLOYMENT.md) for production deployment
+- Review [DEPLOYMENT.md](./DEPLOYMENT.md) for hosting instructions
 
-## Support
+---
 
-For issues:
-1. Check console logs for errors
-2. Review RLS policies in backend dashboard
-3. Verify environment variables
-4. Check Lovable Cloud documentation
+**Project note:** Art Leo is decoupled from Lovable—local setup relies only on Supabase and standard Vite tooling.
+
+
+> Project decoupled from Lovable; no external builder dependencies.

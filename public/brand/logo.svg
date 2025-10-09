@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 48" role="img" aria-labelledby="brand-logo-title">
+  <title id="brand-logo-title">Art Leo logo</title>
+  <defs>
+    <linearGradient id="brand-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="var(--brand-accent, #a855f7)" />
+      <stop offset="100%" stop-color="var(--brand-accent-alt, #6366f1)" />
+    </linearGradient>
+    <filter id="brand-logo-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <linearGradient id="brand-logo-underline" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="var(--brand-accent, #a855f7)" />
+      <stop offset="100%" stop-color="var(--brand-accent-alt, #6366f1)" />
+    </linearGradient>
+  </defs>
+  <g filter="url(#brand-logo-glow)">
+    <rect x="4" y="4" width="40" height="40" rx="14" fill="url(#brand-logo-gradient)" opacity="0.9" />
+    <path
+      d="M24 12.5L13 35.5h6.1l3.6-7.6h9.1l3.7 7.6H41L29.9 12.5H24z"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M24 18.2c-2.35 0-4.26 1.9-4.26 4.25S21.65 26.7 24 26.7c1.09 0 2.09-.41 2.85-1.09l2.69 5.62H24l-3.73 7.83"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.1"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      opacity="0.8"
+    />
+    <circle cx="24" cy="22.4" r="3.2" fill="currentColor" fill-opacity="0.85" />
+  </g>
+  <g transform="translate(64 8)">
+    <text x="0" y="23" fill="currentColor" font-family="var(--brand-font, 'Poppins', 'Inter', 'Segoe UI', sans-serif)" font-size="20" font-weight="600" letter-spacing="0.04em">
+      Art Leo
+    </text>
+    <text x="0" y="40" fill="currentColor" font-family="var(--brand-font-secondary, 'Poppins', 'Inter', 'Segoe UI', sans-serif)" font-size="12" font-weight="400" letter-spacing="0.32em" textLength="128">
+      CREATIVE SPACES
+    </text>
+    <rect x="0" y="30" width="120" height="2" rx="1" fill="url(#brand-logo-underline)" opacity="0.8" />
+  </g>
+</svg>

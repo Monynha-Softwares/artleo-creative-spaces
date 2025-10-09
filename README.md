@@ -1,4 +1,5 @@
 # Art Leo · Creative Spaces
+> **Note:** Project decoupled from Lovable; no external builder dependencies.
 
 Art Leo is a Vite + React portfolio that pairs cinematic motion design with interactive UI patterns. The project showcases background shaders, animated typography, and Supabase-ready data flows that can be extended to power a full digital art showcase.
 
@@ -10,6 +11,19 @@ Art Leo is a Vite + React portfolio that pairs cinematic motion design with inte
 - 🧱 Stepper-based timeline and typewriter biography for the About page
 - 📬 Contact form with toast feedback and safety guards against state updates after unmount
 - ♿ Motion-reduced fallbacks across custom React Bits components
+
+## Branding assets
+
+- `/public/brand/logo.svg` – full wordmark with adaptive gradient mark
+- `/public/brand/mark.svg` – square monomark for avatars and compact UI
+- `/public/favicon.svg` – favicon sourced from the monomark
+- `/public/brand/og-image.svg` – share image for social previews
+
+Example usage with Tailwind:
+
+```html
+<img src="/brand/logo.svg" class="h-6 md:h-8 text-white" alt="Art Leo" />
+```
 
 ## Tech stack
 

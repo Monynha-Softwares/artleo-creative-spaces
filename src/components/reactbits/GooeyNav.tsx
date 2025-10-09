@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { FlowingMenu } from "./FlowingMenu";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand/BrandLogo";
+import { BrandMark } from "@/components/brand/BrandMark";
 
 const links = [
   {
@@ -176,10 +178,11 @@ export const GooeyNav = () => {
             <Link
               to="/"
               className="flex min-w-0 items-center gap-2 py-2"
+              aria-label="Art Leo home"
             >
-              <span className="whitespace-nowrap text-[clamp(1.1rem,4vw,1.5rem)] font-semibold text-foreground">
-                Art Leo
-              </span>
+              <BrandMark className="h-10 w-10 text-foreground md:hidden" />
+              <BrandLogo className="hidden h-8 text-foreground md:block" />
+              <span className="sr-only">Art Leo</span>
             </Link>
             <div className="ml-auto flex items-center gap-3">
               <div className="hidden items-center gap-3 md:flex">

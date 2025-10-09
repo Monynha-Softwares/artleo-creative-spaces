@@ -1,20 +1,20 @@
 # Content Management Guide
 
-This guide explains how to manage content for the Art Leo portfolio website.
+This guide explains how to manage content for the Art Leo portfolio website. The project is now fully self-hosted—no external page builders or embedded dashboards are required.
 
 ## Access Methods
 
-### Option 1: Lovable Cloud Backend (Recommended)
+### Option 1: Supabase Dashboard (Recommended)
 
-The easiest way to manage content is through the Lovable Cloud backend interface:
+The easiest way to manage content is through the Supabase dashboard interface:
 
-1. Click "View Backend" button in the Lovable dashboard
-2. Navigate to "Table Editor" to edit content
-3. All tables are accessible with proper permissions
+1. Visit the [Supabase project dashboard](https://supabase.com/dashboard) for your workspace.
+2. Open **Table Editor** to browse and edit content tables.
+3. Ensure your database role has access to read/write the relevant tables.
 
-### Option 2: Admin Panel (Future)
+### Option 2: Future Custom Admin Panel
 
-A custom admin panel UI is planned for easier content management. Currently use the backend dashboard.
+A custom admin panel UI is planned for easier content management. Until that ships, continue using the Supabase dashboard or SQL Editor for updates.
 
 ---
 
@@ -22,13 +22,13 @@ A custom admin panel UI is planned for easier content management. Currently use 
 
 ### Add New Artwork
 
-1. Go to Backend → Table Editor → `artworks`
-2. Click "Insert row"
+1. Table Editor → `artworks`
+2. Click **Insert row**
 3. Fill in fields:
    - **title**: Artwork name
-   - **slug**: URL-friendly version (e.g., "cosmic-dreams")
+   - **slug**: URL-friendly version (e.g., `cosmic-dreams`)
    - **description**: Detailed description (optional)
-   - **category**: Type (e.g., "3D", "Motion", "Interactive")
+   - **category**: Type (e.g., `3D`, `Motion`, `Interactive`)
    - **year**: Year created
    - **technique**: Medium used (optional)
    - **cover_url**: Main image URL (upload to Storage first)
@@ -40,28 +40,28 @@ A custom admin panel UI is planned for easier content management. Currently use 
 
 ### Upload Images
 
-1. Backend → Storage → `artwork-images` bucket
-2. Click "Upload file"
+1. Storage → `artwork-images` bucket
+2. Click **Upload file**
 3. Select image file
 4. Copy the public URL
-5. Use URL in artwork's `cover_url` or `images` array
+5. Use the URL in the artwork's `cover_url` or `images` array
 
-**Image URL Format**:
+**Image URL format**:
 ```
 https://<project>.supabase.co/storage/v1/object/public/artwork-images/image-name.jpg
 ```
 
 ### Edit Existing Artwork
 
-1. Find artwork in `artworks` table
-2. Click row to edit
-3. Update fields
+1. Find the artwork in `artworks`
+2. Click the row to edit
+3. Update fields as needed
 4. Save changes (auto-updates `updated_at`)
 
 ### Delete Artwork
 
-1. Find artwork in table
-2. Click row → Delete
+1. Locate the artwork row
+2. Click **Delete**
 3. **Warning**: This permanently removes the artwork
 
 ---
@@ -70,13 +70,13 @@ https://<project>.supabase.co/storage/v1/object/public/artwork-images/image-name
 
 ### Add Exhibition Event
 
-1. Backend → Table Editor → `exhibitions`
+1. Table Editor → `exhibitions`
 2. Insert new row:
    - **title**: Exhibition name
    - **location**: Venue (optional)
-   - **date**: Display date (flexible text, e.g., "March 2024")
+   - **date**: Display date (flexible text, e.g., `March 2024`)
    - **year**: Year for sorting (required)
-   - **type**: "solo" or "group"
+   - **type**: `solo` or `group`
    - **description**: Event details (optional)
    - **display_order**: Manual sort order
 
@@ -86,7 +86,7 @@ Exhibitions are sorted by:
 1. `display_order` (ascending)
 2. `year` (descending)
 
-To reorder: Change `display_order` values (0 = default auto-sort by year).
+To reorder, adjust `display_order` values (0 = default auto-sort by year).
 
 ---
 
@@ -94,9 +94,9 @@ To reorder: Change `display_order` values (0 = default auto-sort by year).
 
 ### Edit Homepage Content
 
-1. Backend → Table Editor → `pages`
-2. Find row where `slug = 'home'`
-3. Edit `content` field (JSON format):
+1. Table Editor → `pages`
+2. Find the row where `slug = 'home'`
+3. Edit the `content` field (JSON format):
 
 ```json
 {
@@ -118,8 +118,8 @@ To reorder: Change `display_order` values (0 = default auto-sort by year).
 
 ### Edit About Page
 
-1. Find row where `slug = 'about'`
-2. Update `content` JSON:
+1. Locate the row where `slug = 'about'`
+2. Update the `content` JSON:
 
 ```json
 {
@@ -141,7 +141,7 @@ For each page:
 
 ### View/Edit Global Settings
 
-1. Backend → Table Editor → `settings`
+1. Table Editor → `settings`
 2. Edit existing settings:
 
 | Key | Value (JSON) | is_public | Description |
@@ -159,15 +159,15 @@ For each page:
    - **is_public**: `true` if safe for public, `false` for sensitive data
    - **description**: What this setting controls
 
-**Security Warning**: Never set `is_public = true` for API keys, secrets, or private config.
+**Security warning**: Never set `is_public = true` for API keys, secrets, or private config.
 
 ---
 
 ## Viewing Contact Messages
 
-1. Backend → Table Editor → `contact_messages`
+1. Table Editor → `contact_messages`
 2. View submissions (read-only for admins)
-3. Update `status` to "read" after reviewing
+3. Update `status` to `read` after reviewing
 
 **Note**: Contact messages cannot be deleted (data retention policy).
 
@@ -177,7 +177,7 @@ For each page:
 
 ### Assign Admin Role
 
-Only admins can assign roles. From backend SQL editor:
+Only admins can assign roles. From the SQL Editor:
 
 ```sql
 -- Find user ID from profiles table first
@@ -199,82 +199,14 @@ WHERE user_id = '<user-id>' AND role = 'admin';
 
 ## Content Workflow
 
-### Publishing Workflow
-
-1. Create content with `status = 'draft'`
-2. Preview changes (admins can see drafts)
-3. Update `status = 'published'` when ready
-4. Content appears to public immediately
-
-### Featured Content
-
-Mark important artworks as `featured = true` to display on homepage.
+1. Draft content in `draft` or `display_order = 0`
+2. Preview locally via `npm run dev`
+3. Promote to `published` once approved
+4. Archive old entries by setting `status = 'archived'`
 
 ---
 
-## Best Practices
+**Project note:** Art Leo is now decoupled from third-party site builders—content changes flow entirely through Supabase tables or future in-house tooling.
 
-### Images
 
-- **Format**: JPG for photos, PNG for transparency, WebP for best compression
-- **Size**: Max 2MB per image
-- **Dimensions**: 1920px width recommended for hero images
-- **Naming**: Use descriptive names: `artwork-cosmic-dreams-2024.jpg`
-
-### Slugs
-
-- Lowercase letters, numbers, hyphens only
-- No spaces or special characters
-- Example: `"Cosmic Dreams!"` → `cosmic-dreams`
-
-### Content Safety
-
-- Preview changes before publishing
-- Keep backups of important content (export tables)
-- Test links and image URLs before saving
-
-### SEO Tips
-
-- Write unique meta titles and descriptions for each page
-- Use descriptive alt text (planned feature)
-- Keep URLs short and meaningful (slugs)
-
----
-
-## Troubleshooting
-
-### Image not loading
-
-**Check**:
-1. File uploaded to correct bucket
-2. URL copied correctly
-3. Bucket is public
-4. No typos in URL
-
-### Content not showing
-
-**Check**:
-1. Status is "published" (not draft)
-2. Display order is set appropriately
-3. No RLS policy issues (check logs)
-
-### Can't edit content
-
-**Check**:
-1. Logged in as admin
-2. User has admin role in `user_roles` table
-3. RLS policies are correct
-
----
-
-## Future Features
-
-Planned admin panel will include:
-- Rich text editor for descriptions
-- Drag-and-drop image upload
-- Visual page builder
-- Bulk operations
-- Content preview
-- Media library
-
-For now, use the backend dashboard for full control over all content.
+> Project decoupled from Lovable; no external builder dependencies.

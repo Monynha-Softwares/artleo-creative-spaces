@@ -1,0 +1,383 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Navigation > renders the custom brand SVG 1`] = `
+<header
+  class="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6"
+>
+  <div
+    class="mx-auto w-full max-w-5xl"
+  >
+    <div
+      class="relative"
+    >
+      <nav
+        aria-label="Main"
+        class="flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-4 py-2 backdrop-blur-xl motion-reduce:transition-none min-h-[3.5rem] shadow-[0_12px_45px_rgba(15,23,42,0.45)]"
+      >
+        <a
+          aria-label="Art Leo home"
+          class="flex min-w-0 items-center gap-2 py-2"
+          href="/"
+        >
+          <svg
+            aria-labelledby="test-id-0-title"
+            class="h-10 w-10 text-foreground md:hidden"
+            role="img"
+            viewBox="0 0 48 48"
+          >
+            <title
+              id="test-id-0-title"
+            >
+              Art Leo mark
+            </title>
+            <defs>
+              <lineargradient
+                id="test-id-0-grad"
+                x1="0%"
+                x2="100%"
+                y1="0%"
+                y2="100%"
+              >
+                <stop
+                  offset="0%"
+                  stop-color="var(--brand-accent, #a855f7)"
+                />
+                <stop
+                  offset="100%"
+                  stop-color="var(--brand-accent-alt, #6366f1)"
+                />
+              </lineargradient>
+              <filter
+                height="160%"
+                id="test-id-1-glow"
+                width="160%"
+                x="-30%"
+                y="-30%"
+              >
+                <fegaussianblur
+                  result="blur"
+                  stdDeviation="4"
+                />
+                <femerge>
+                  <femergenode
+                    in="blur"
+                  />
+                  <femergenode
+                    in="SourceGraphic"
+                  />
+                </femerge>
+              </filter>
+            </defs>
+            <g
+              filter="url(#test-id-1-glow)"
+            >
+              <rect
+                fill="url(#test-id-0-grad)"
+                height="40"
+                opacity="0.9"
+                rx="14"
+                width="40"
+                x="4"
+                y="4"
+              />
+              <path
+                d="M24 12.5l-11 23h6.1l3.6-7.6h9.1l3.7 7.6H41l-11.1-23h-5.9z"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.4"
+              />
+              <path
+                d="M24 18.2c-2.35 0-4.26 1.9-4.26 4.25 0 2.35 1.91 4.25 4.26 4.25 1.09 0 2.09-.41 2.85-1.09l2.69 5.62h-5.54l-3.73 7.83"
+                fill="none"
+                opacity="0.8"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.1"
+              />
+              <circle
+                cx="24"
+                cy="22.4"
+                fill="currentColor"
+                fill-opacity="0.85"
+                r="3.2"
+              />
+            </g>
+          </svg>
+          <svg
+            aria-labelledby="test-id-5"
+            class="w-auto hidden h-8 text-foreground md:block"
+            role="img"
+            viewBox="0 0 220 48"
+          >
+            <title
+              id="test-id-5"
+            >
+              Art Leo
+            </title>
+            <defs>
+              <lineargradient
+                id="test-id-2-grad"
+                x1="0%"
+                x2="100%"
+                y1="0%"
+                y2="100%"
+              >
+                <stop
+                  offset="0%"
+                  stop-color="var(--brand-accent, #a855f7)"
+                />
+                <stop
+                  offset="100%"
+                  stop-color="var(--brand-accent-alt, #6366f1)"
+                />
+              </lineargradient>
+              <filter
+                height="160%"
+                id="test-id-3-glow"
+                width="160%"
+                x="-30%"
+                y="-30%"
+              >
+                <fegaussianblur
+                  result="blur"
+                  stdDeviation="4"
+                />
+                <femerge>
+                  <femergenode
+                    in="blur"
+                  />
+                  <femergenode
+                    in="SourceGraphic"
+                  />
+                </femerge>
+              </filter>
+              <lineargradient
+                id="test-id-4-underline"
+                x1="0%"
+                x2="100%"
+                y1="0%"
+                y2="0%"
+              >
+                <stop
+                  offset="0%"
+                  stop-color="var(--brand-accent, #a855f7)"
+                />
+                <stop
+                  offset="100%"
+                  stop-color="var(--brand-accent-alt, #6366f1)"
+                />
+              </lineargradient>
+            </defs>
+            <g
+              filter="url(#test-id-3-glow)"
+            >
+              <rect
+                fill="url(#test-id-2-grad)"
+                height="40"
+                opacity="0.9"
+                rx="14"
+                width="40"
+                x="4"
+                y="4"
+              />
+              <path
+                d="M24 12.5l-11 23h6.1l3.6-7.6h9.1l3.7 7.6H41l-11.1-23h-5.9z"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.4"
+              />
+              <path
+                d="M24 18.2c-2.35 0-4.26 1.9-4.26 4.25 0 2.35 1.91 4.25 4.26 4.25 1.09 0 2.09-.41 2.85-1.09l2.69 5.62h-5.54l-3.73 7.83"
+                fill="none"
+                opacity="0.8"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.1"
+              />
+              <circle
+                cx="24"
+                cy="22.4"
+                fill="currentColor"
+                fill-opacity="0.85"
+                r="3.2"
+              />
+            </g>
+            <g
+              transform="translate(64 8)"
+            >
+              <text
+                fill="currentColor"
+                font-family="var(--brand-font, 'Poppins', 'Inter', 'Segoe UI', sans-serif)"
+                font-size="20"
+                font-weight="600"
+                letter-spacing="0.04em"
+                x="0"
+                y="23"
+              >
+                Art Leo
+              </text>
+              <text
+                fill="currentColor"
+                font-family="var(--brand-font-secondary, 'Poppins', 'Inter', 'Segoe UI', sans-serif)"
+                font-size="12"
+                font-weight="400"
+                letter-spacing="0.32em"
+                textLength="128"
+                x="0"
+                y="40"
+              >
+                CREATIVE SPACES
+              </text>
+              <rect
+                fill="url(#test-id-4-underline)"
+                height="2"
+                opacity="0.8"
+                rx="1"
+                width="120"
+                x="0"
+                y="30"
+              />
+            </g>
+          </svg>
+          <span
+            class="sr-only"
+          >
+            Art Leo
+          </span>
+        </a>
+        <div
+          class="ml-auto flex items-center gap-3"
+        >
+          <div
+            class="hidden items-center gap-3 md:flex"
+          >
+            <div
+              class="relative"
+            >
+              <a
+                class="relative inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition-colors text-primary"
+                href="/"
+              >
+                Home
+              </a>
+              <span
+                class="pointer-events-none absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-primary/30 via-secondary/20 to-primary/30 blur-xl"
+              />
+            </div>
+            <div
+              class="relative"
+            >
+              <a
+                class="relative inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground"
+                href="/portfolio"
+              >
+                Portfolio
+              </a>
+            </div>
+            <div
+              class="relative"
+            >
+              <a
+                class="relative inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground"
+                href="/about"
+              >
+                About
+              </a>
+            </div>
+            <div
+              class="relative"
+            >
+              <a
+                class="relative inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground"
+                href="/contact"
+              >
+                Contact
+              </a>
+            </div>
+            <a
+              class="ml-2 border-l border-border/50 pl-2"
+              href="/auth"
+            >
+              <button
+                class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-surface-0 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3 gap-2"
+              >
+                <svg
+                  class="lucide lucide-log-in h-4 w-4"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"
+                  />
+                  <polyline
+                    points="10 17 15 12 10 7"
+                  />
+                  <line
+                    x1="15"
+                    x2="3"
+                    y1="12"
+                    y2="12"
+                  />
+                </svg>
+                Login
+              </button>
+            </a>
+          </div>
+          <button
+            aria-controls="mobile-navigation"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+            aria-label="Open navigation"
+            class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-card/70 p-2 text-foreground transition-colors hover:border-primary/80 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none md:hidden"
+          >
+            <svg
+              class="lucide lucide-menu"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <line
+                x1="4"
+                x2="20"
+                y1="12"
+                y2="12"
+              />
+              <line
+                x1="4"
+                x2="20"
+                y1="6"
+                y2="6"
+              />
+              <line
+                x1="4"
+                x2="20"
+                y1="18"
+                y2="18"
+              />
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+`;

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="og-title">
+  <title id="og-title">Art Leo – Creative Spaces</title>
+  <defs>
+    <linearGradient id="og-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f2937" />
+      <stop offset="50%" stop-color="#312e81" />
+      <stop offset="100%" stop-color="#111827" />
+    </linearGradient>
+    <linearGradient id="og-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#6366f1" />
+    </linearGradient>
+    <filter id="og-blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="120" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#og-bg)" />
+  <g transform="translate(140 110)" filter="url(#og-blur)">
+    <rect x="0" y="0" width="220" height="220" rx="72" fill="url(#og-accent)" opacity="0.9" />
+    <path
+      d="M110 40L60 180h34l20-43h50l20 43h34L168 40h-58z"
+      fill="none"
+      stroke="#f8fafc"
+      stroke-width="9"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M110 74c-18 0-33 15-33 33s15 33 33 33c8 0 15.5-3 21.2-8.4l20 42.6h-40l-27 57"
+      fill="none"
+      stroke="#f8fafc"
+      stroke-width="7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      opacity="0.8"
+    />
+    <circle cx="110" cy="110" r="25" fill="#f8fafc" fill-opacity="0.9" />
+  </g>
+  <g transform="translate(420 200)">
+    <text x="0" y="0" fill="#f8fafc" font-family="'Poppins', 'Inter', 'Segoe UI', sans-serif" font-size="72" font-weight="600" letter-spacing="0.08em">
+      ART LEO
+    </text>
+    <text x="0" y="90" fill="#c7d2fe" font-family="'Poppins', 'Inter', 'Segoe UI', sans-serif" font-size="36" font-weight="400" letter-spacing="0.42em">
+      CREATIVE SPACES
+    </text>
+    <text x="0" y="170" fill="#e0e7ff" font-family="'Inter', 'Segoe UI', sans-serif" font-size="28" font-weight="400" opacity="0.9">
+      Immersive digital art, motion design, and interactive experiences.
+    </text>
+  </g>
+</svg>

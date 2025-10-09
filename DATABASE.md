@@ -4,7 +4,7 @@ This document describes the database structure for the Art Leo portfolio website
 
 ## Overview
 
-The database uses PostgreSQL (via Lovable Cloud/Supabase) with Row Level Security (RLS) enabled on all tables.
+The database uses PostgreSQL on Supabase with Row Level Security (RLS) enabled on all tables.
 
 ## Tables
 
@@ -247,7 +247,7 @@ All schema changes are tracked in `supabase/migrations/`. Never modify productio
 
 To create a new migration:
 
-1. Use Lovable Cloud migration tool
+1. Use the Supabase CLI migration tooling (`supabase db push` or `supabase db reset`)
 2. Test locally first
 3. Apply to production via backend dashboard
 
@@ -282,3 +282,6 @@ Current indexes:
 - Full-text search on artworks.description
 - GIN index on artworks.tags for array searches
 - Index on exhibitions.year for timeline sorting
+
+
+> Project decoupled from Lovable; no external builder dependencies.
