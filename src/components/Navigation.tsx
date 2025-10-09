@@ -1,7 +1,12 @@
 import { GooeyNav } from "@/components/reactbits/GooeyNav";
+import { MobileNavProvider } from "@/contexts/MobileNavContext";
 
 export const Navigation = () => {
-  return <GooeyNav />;
+  return (
+    <MobileNavProvider>
+      <GooeyNav />
+    </MobileNavProvider>
+  );
 };
 
 Navigation.displayName = "Navigation";

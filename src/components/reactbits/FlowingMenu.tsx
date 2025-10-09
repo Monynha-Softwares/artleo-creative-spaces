@@ -1,6 +1,6 @@
 import { useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
-import React from "react";
+import React, { forwardRef, type MutableRefObject } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,8 @@ interface FlowingMenuProps {
   activeHref?: string;
   onItemClick?: () => void;
   className?: string;
+  id?: string;
+  ariaLabelledby?: string;
 }
 
 const animationDefaults: gsap.TweenVars = { duration: 0.6, ease: "expo" };
@@ -34,11 +36,12 @@ interface MenuItemProps extends FlowingMenuItem {
   isActive: boolean;
   reduceMotion: boolean;
   onItemClick?: () => void;
+  index: number;
 }
 
 const defaultAccent = "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%)";
 
-const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, reduceMotion, onItemClick }) => {
+const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, reduceMotion, onItemClick, index }) => {
   const itemRef = React.useRef<HTMLDivElement>(null);
   const marqueeRef = React.useRef<HTMLDivElement>(null);
   const marqueeInnerRef = React.useRef<HTMLDivElement>(null);
@@ -105,17 +108,21 @@ const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, redu
           ? "bg-surface-2 shadow-[0_-8px_24px_rgba(99,102,241,0.35)] before:pointer-events-none before:absolute before:inset-x-6 before:top-0 before:h-1 before:bg-[linear-gradient(to_bottom,rgba(255,255,255,0.45),transparent)] before:content-['']"
           : undefined,
       )}
+      role="none"
     >
       <Link
         to={href}
         className={cn(
-          "flex h-full min-h-[64px] w-full items-center justify-center px-6 py-4 text-lg font-semibold uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+          "flex h-full min-h-[64px] w-full items-center justify-center px-6 py-4 text-base font-semibold uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          isActive ? "text-foreground" : "text-foreground/80 hover:text-foreground",
         )}
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
         onClick={onItemClick}
         aria-current={isActive ? "page" : undefined}
+        role="menuitem"
+        tabIndex={-1}
+        data-menu-index={index}
       >
         {label}
       </Link>
@@ -133,27 +140,43 @@ const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, redu
   );
 };
 
-export const FlowingMenu: React.FC<FlowingMenuProps> = ({ items, activeHref, onItemClick, className }) => {
-  const reduceMotion = useReducedMotion();
+export const FlowingMenu = forwardRef<HTMLElement, FlowingMenuProps>(
+  ({ items, activeHref, onItemClick, className, id, ariaLabelledby }, ref) => {
+    const reduceMotion = useReducedMotion();
 
-  return (
-    <div className={cn("w-full overflow-hidden", className)}>
-      <nav
-        className="flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-surface-1/90 backdrop-blur-xl"
-        aria-label="Mobile"
-      >
-        {items.map((item) => (
-          <MenuItem
-            key={item.href}
-            {...item}
-            isActive={activeHref === item.href}
-            reduceMotion={reduceMotion}
-            onItemClick={onItemClick}
-          />
-        ))}
-      </nav>
-    </div>
-  );
-};
+    const assignRef = (node: HTMLElement | null) => {
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref) {
+        (ref as MutableRefObject<HTMLElement | null>).current = node;
+      }
+    };
+
+    return (
+      <div className={cn("w-full overflow-hidden", className)}>
+        <nav
+          id={id}
+          ref={assignRef}
+          className="flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-surface-1/90 backdrop-blur-xl focus:outline-none"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby={ariaLabelledby}
+          tabIndex={-1}
+        >
+          {items.map((item, index) => (
+            <MenuItem
+              key={item.href}
+              {...item}
+              index={index}
+              isActive={activeHref === item.href}
+              reduceMotion={reduceMotion}
+              onItemClick={onItemClick}
+            />
+          ))}
+        </nav>
+      </div>
+    );
+  },
+);
 
 FlowingMenu.displayName = "FlowingMenu";
