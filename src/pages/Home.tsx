@@ -3,10 +3,15 @@ import { Button } from "@/components/ui/button";
 import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowRight, Sparkles, Palette, Eye } from "lucide-react";
 import { motion } from "framer-motion";
-import { SilkBackground } from "@/components/reactbits/SilkBackground";
 import LiquidEtherBackground from "@/components/reactbits/LiquidEtherBackground";
 import { SplitText } from "@/components/reactbits/SplitText";
 import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
+import { PixelCard } from "@/components/reactbits/PixelCard";
+import { usePages } from "@/hooks/usePages";
+import { useSiteSetting } from "@/hooks/useSettings";
+import { useArtworks } from "@/hooks/useArtworks";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ArtworkSkeleton } from "@/components/ArtworkSkeleton";
 
 const FEATURED_DISCIPLINES = [
   { icon: Palette, title: "Motion Design", desc: "Dynamic visual narratives" },
@@ -15,6 +20,9 @@ const FEATURED_DISCIPLINES = [
 ] as const;
 
 const Home = () => {
+  const { data: homePage } = usePages("home");
+  const tagline = useSiteSetting("site_tagline", "Digital Artist & Creative Developer");
+  const { data: featuredArtworks, isLoading: artworksLoading } = useArtworks({ featured: true });
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section */}
@@ -38,7 +46,7 @@ const Home = () => {
             >
               <span className="inline-flex flex-wrap items-center gap-2 rounded-full border border-border/50 bg-surface-1/50 px-3 py-1 text-[clamp(0.85rem,3.2vw,0.95rem)] text-muted-foreground backdrop-blur-md whitespace-normal">
                 <Sparkles className="h-4 w-4 text-primary" />
-                Digital Artist & Creative Developer
+                {tagline}
               </span>
             </motion.div>
 
@@ -49,8 +57,7 @@ const Home = () => {
             />
 
             <p className="mx-auto mb-8 max-w-2xl text-[clamp(1rem,3.4vw,1.15rem)] text-muted-foreground leading-relaxed text-balance">
-              Exploring the intersection of art, technology, and emotion through
-              immersive 3D experiences and motion design.
+              Exploring the intersection of art, technology, and emotion through immersive 3D experiences and motion design.
             </p>
 
             <div className="flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
@@ -100,27 +107,50 @@ const Home = () => {
             </div>
           </SectionReveal>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {FEATURED_DISCIPLINES.map((item, index) => (
-              <SectionReveal key={index} delay={index * 0.1}>
-                <SpotlightCard className="bg-surface-3/90 p-6 sm:p-8">
-                  <div className="flex flex-col gap-3 text-left sm:gap-4">
-                    <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <item.icon className="h-7 w-7" />
-                    </div>
-                    <div>
-                      <h3 className="mb-1 text-[clamp(1.25rem,4.5vw,1.75rem)] font-bold leading-snug text-balance">
-                        {item.title}
-                      </h3>
-                      <p className="text-[clamp(1rem,3.2vw,1.1rem)] text-muted-foreground leading-relaxed">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                </SpotlightCard>
-              </SectionReveal>
-            ))}
-          </div>
+          <ErrorBoundary>
+            {artworksLoading ? (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <ArtworkSkeleton key={i} />
+                ))}
+              </div>
+            ) : featuredArtworks && featuredArtworks.length > 0 ? (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {featuredArtworks.slice(0, 3).map((artwork, index) => (
+                  <SectionReveal key={artwork.id} delay={index * 0.1}>
+                    <Link to={`/portfolio/${artwork.slug}`}>
+                      <PixelCard
+                        title={artwork.title}
+                        imageUrl={artwork.cover_url}
+                      />
+                    </Link>
+                  </SectionReveal>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {FEATURED_DISCIPLINES.map((item, index) => (
+                  <SectionReveal key={index} delay={index * 0.1}>
+                    <SpotlightCard className="bg-surface-3/90 p-6 sm:p-8">
+                      <div className="flex flex-col gap-3 text-left sm:gap-4">
+                        <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                          <item.icon className="h-7 w-7" />
+                        </div>
+                        <div>
+                          <h3 className="mb-1 text-[clamp(1.25rem,4.5vw,1.75rem)] font-bold leading-snug text-balance">
+                            {item.title}
+                          </h3>
+                          <p className="text-[clamp(1rem,3.2vw,1.1rem)] text-muted-foreground leading-relaxed">
+                            {item.desc}
+                          </p>
+                        </div>
+                      </div>
+                    </SpotlightCard>
+                  </SectionReveal>
+                ))}
+              </div>
+            )}
+          </ErrorBoundary>
 
           <SectionReveal delay={0.3}>
             <div className="mt-12 text-center">

@@ -1,9 +1,11 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { FlowingMenu } from "./FlowingMenu";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 const links = [
   {
@@ -32,6 +34,7 @@ export const GooeyNav = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const reduceMotion = useReducedMotion();
+  const { user, isAdmin, signOut } = useAuth();
 
   const isActive = (href: string) => location.pathname === href;
 
@@ -61,7 +64,7 @@ export const GooeyNav = () => {
             {open ? <X /> : <Menu />}
           </button>
         </div>
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
           {links.map((link) => (
             <motion.div key={link.href} className="relative">
               <Link
@@ -84,6 +87,31 @@ export const GooeyNav = () => {
                 )}
               </motion.div>
             ))}
+            
+            {/* Auth Section */}
+            {user ? (
+              <div className="flex items-center gap-2 ml-2 pl-2 border-l border-border/50">
+                {isAdmin && (
+                  <Link to="/admin">
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <User className="h-4 w-4" />
+                      Admin
+                    </Button>
+                  </Link>
+                )}
+                <Button variant="ghost" size="sm" onClick={() => signOut()} className="gap-2">
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Link to="/auth" className="ml-2 pl-2 border-l border-border/50">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <LogIn className="h-4 w-4" />
+                  Login
+                </Button>
+              </Link>
+            )}
           </div>
         <button
           className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-surface-1/70 p-2 text-foreground motion-reduce:transition-none md:hidden"
