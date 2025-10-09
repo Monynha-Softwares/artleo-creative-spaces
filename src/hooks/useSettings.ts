@@ -1,11 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
-interface Setting {
-  key: string;
-  value: any;
-  description?: string;
-}
+type Setting = Database["public"]["Tables"]["settings"]["Row"];
 
 export const useSettings = (key?: string) => {
   return useQuery({
@@ -14,30 +11,33 @@ export const useSettings = (key?: string) => {
       if (!key) {
         const { data, error } = await supabase
           .from("settings")
-          .select("*")
+          .select<Setting>("*")
           .eq("is_public", true);
 
         if (error) throw error;
-        return data as Setting[];
+        return data ?? [];
       }
 
       const { data, error } = await supabase
         .from("settings")
-        .select("*")
+        .select<Setting>("*")
         .eq("key", key)
         .eq("is_public", true)
         .maybeSingle();
 
       if (error) throw error;
-      return data as Setting | null;
+      return data;
     },
     staleTime: 10 * 60 * 1000, // 10 minutes
     retry: 2,
   });
 };
 
-export const useSiteSetting = (key: string, fallback: any = null) => {
+export const useSiteSetting = <T>(key: string, fallback: T | null = null) => {
   const { data } = useSettings(key);
-  if (Array.isArray(data)) return fallback;
-  return data?.value ?? fallback;
+  if (!data || Array.isArray(data)) {
+    return fallback;
+  }
+
+  return ((data.value as T | null) ?? fallback) as T | null;
 };
