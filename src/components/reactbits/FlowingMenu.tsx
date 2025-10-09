@@ -109,12 +109,13 @@ const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, redu
       <Link
         to={href}
         className={cn(
-          "flex h-full min-h-[64px] w-full items-center justify-center px-6 py-4 text-lg font-semibold uppercase transition-colors",
+          "flex h-full min-h-[64px] w-full items-center justify-center px-6 py-4 text-lg font-semibold uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
         )}
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
         onClick={onItemClick}
+        aria-current={isActive ? "page" : undefined}
       >
         {label}
       </Link>
@@ -137,7 +138,10 @@ export const FlowingMenu: React.FC<FlowingMenuProps> = ({ items, activeHref, onI
 
   return (
     <div className={cn("w-full overflow-hidden", className)}>
-      <nav className="flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-surface-1/80 backdrop-blur-xl">
+      <nav
+        className="flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-surface-1/90 backdrop-blur-xl"
+        aria-label="Mobile"
+      >
         {items.map((item) => (
           <MenuItem
             key={item.href}
