@@ -15,6 +15,7 @@ interface FlowingMenuProps {
   activeHref?: string;
   onItemClick?: () => void;
   className?: string;
+  initialFocusIndex?: number;
 }
 
 const animationDefaults: gsap.TweenVars = { duration: 0.6, ease: "expo" };
@@ -34,11 +35,12 @@ interface MenuItemProps extends FlowingMenuItem {
   isActive: boolean;
   reduceMotion: boolean;
   onItemClick?: () => void;
+  autoFocus?: boolean;
 }
 
 const defaultAccent = "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%)";
 
-const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, reduceMotion, onItemClick }) => {
+const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, reduceMotion, onItemClick, autoFocus }) => {
   const itemRef = React.useRef<HTMLDivElement>(null);
   const marqueeRef = React.useRef<HTMLDivElement>(null);
   const marqueeInnerRef = React.useRef<HTMLDivElement>(null);
@@ -110,18 +112,21 @@ const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, redu
         to={href}
         className={cn(
           "flex h-full min-h-[64px] w-full items-center justify-center px-6 py-4 text-lg font-semibold uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+          isActive ? "text-foreground" : "text-foreground",
+          !isActive && "opacity-90 hover:opacity-100",
         )}
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
         onClick={onItemClick}
         aria-current={isActive ? "page" : undefined}
+        data-autofocus={autoFocus ? true : undefined}
+        data-menu-item
       >
         {label}
       </Link>
       <div
         ref={marqueeRef}
-        className="pointer-events-none absolute inset-0 translate-y-[101%] bg-white text-foreground transition-transform duration-500 ease-out"
+        className="pointer-events-none absolute inset-0 translate-y-[101%] bg-white text-foreground transition-transform duration-500 ease-out motion-reduce:hidden"
       >
         <div ref={marqueeInnerRef} className="flex h-full w-[200%]">
           <div className="flex h-full w-[200%] items-center animate-marquee">
@@ -133,7 +138,13 @@ const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, redu
   );
 };
 
-export const FlowingMenu: React.FC<FlowingMenuProps> = ({ items, activeHref, onItemClick, className }) => {
+export const FlowingMenu: React.FC<FlowingMenuProps> = ({
+  items,
+  activeHref,
+  onItemClick,
+  className,
+  initialFocusIndex = 0,
+}) => {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -141,14 +152,16 @@ export const FlowingMenu: React.FC<FlowingMenuProps> = ({ items, activeHref, onI
       <nav
         className="flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-surface-1/90 backdrop-blur-xl"
         aria-label="Mobile"
+        data-test-mobile-menu
       >
-        {items.map((item) => (
+        {items.map((item, index) => (
           <MenuItem
             key={item.href}
             {...item}
             isActive={activeHref === item.href}
             reduceMotion={reduceMotion}
             onItemClick={onItemClick}
+            autoFocus={index === initialFocusIndex}
           />
         ))}
       </nav>

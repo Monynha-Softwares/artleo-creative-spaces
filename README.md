@@ -59,6 +59,40 @@ npm run lint
 
 Linting ensures TypeScript, React, and accessibility conventions stay consistent.
 
+### Automated testing & accessibility
+
+- **Unit + interaction tests** (`vitest` + Testing Library):
+
+  ```bash
+  npm run test
+  ```
+
+- **End-to-end coverage** (Playwright + axe-core):
+
+  ```bash
+  npx playwright install chromium   # first run only
+  npm run test:e2e -- --project=mobile-chromium
+  npm run test:e2e -- --project=desktop-chromium
+  npm run test:e2e -- --project=mobile-reduced-motion
+  ```
+
+  The mobile run asserts the focus trap, automatic closure on navigation, and validates the dialog with `axe-core` to guarantee no critical accessibility violations.
+
+- **Lighthouse accessibility audit**:
+
+  ```bash
+  npm run build
+  npm run preview -- --host 0.0.0.0 --port 4173
+  CHROME_PATH=/root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome \
+    npx lighthouse http://127.0.0.1:4173 \
+    --only-categories=accessibility \
+    --chrome-flags="--headless=new --no-sandbox --disable-gpu" \
+    --preset=desktop --throttling-method=provided \
+    --screen-emulation.disabled --emulated-form-factor=none
+  ```
+
+  Headless environments without a window manager can intermittently raise `NO_FCP` warnings; rerun the command after ensuring the preview server is serving the built assets or execute the audit locally for a fully interactive report.
+
 ## Project structure
 
 ```

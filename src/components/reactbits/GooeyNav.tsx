@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X, LogIn, LogOut, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { FlowingMenu } from "./FlowingMenu";
@@ -37,6 +37,9 @@ export const GooeyNav = () => {
   const { user, isAdmin, signOut } = useAuth();
 
   const menuId = "mobile-navigation";
+  const dialogTitleId = useId();
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setOpen(false);
@@ -53,6 +56,98 @@ export const GooeyNav = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const focusableSelector = [
+      "a[href]",
+      "button:not([disabled])",
+      "[tabindex]:not([tabindex='-1'])",
+      "[role='button']",
+    ].join(",");
+
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const getFocusableElements = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector));
+
+    const focusMenuItems = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>("[data-menu-item]"));
+
+    const focusTarget =
+      dialog.querySelector<HTMLElement>("[data-autofocus]") ??
+      getFocusableElements()[0] ??
+      dialog;
+
+    const raf = requestAnimationFrame(() => {
+      focusTarget?.focus({ preventScroll: true });
+    });
+
+    const cycleFocus = (elements: HTMLElement[], direction: 1 | -1) => {
+      if (!elements.length) return;
+      const current = document.activeElement as HTMLElement | null;
+      const index = current ? elements.indexOf(current) : -1;
+      const nextIndex =
+        index === -1
+          ? direction === 1
+            ? 0
+            : elements.length - 1
+          : (index + direction + elements.length) % elements.length;
+      elements[nextIndex]?.focus({ preventScroll: true });
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        const focusableElements = getFocusableElements();
+        if (!focusableElements.length) {
+          event.preventDefault();
+          dialog.focus({ preventScroll: true });
+          return;
+        }
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        const activeElement = document.activeElement as HTMLElement | null;
+
+        if (!event.shiftKey && activeElement === lastElement) {
+          event.preventDefault();
+          firstElement.focus({ preventScroll: true });
+        }
+
+        if (event.shiftKey && activeElement === firstElement) {
+          event.preventDefault();
+          lastElement.focus({ preventScroll: true });
+        }
+      }
+
+      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+        event.preventDefault();
+        cycleFocus(focusMenuItems(), 1);
+      }
+
+      if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        cycleFocus(focusMenuItems(), -1);
+      }
+    };
+
+    dialog.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      dialog.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (previouslyFocusedRef.current) {
+        previouslyFocusedRef.current.focus({ preventScroll: true });
+        previouslyFocusedRef.current = null;
+      }
+    };
   }, [open]);
 
   const isActive = (href: string) => location.pathname === href;
@@ -147,39 +242,98 @@ export const GooeyNav = () => {
               <motion.div
                 key="mobile-menu"
                 id={menuId}
-                initial={{ opacity: 0, y: -12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-x-0 top-full z-50 mt-3 md:hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.2, ease: "linear" }}
+                className="fixed inset-0 z-[60] flex items-start justify-center px-4 pb-8 pt-24 md:hidden"
+                role="presentation"
+                onClick={closeMenu}
               >
-                <FlowingMenu
-                  items={links}
-                  activeHref={location.pathname}
-                  onItemClick={closeMenu}
-                  className="shadow-[0_20px_60px_rgba(15,23,42,0.45)]"
-                />
+                <motion.div
+                  ref={dialogRef}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby={dialogTitleId}
+                  tabIndex={-1}
+                  initial={{ opacity: 0, y: -16, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -16, scale: 0.98 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative w-full max-w-md rounded-3xl border border-border/70 bg-background/95 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.55)] backdrop-blur-xl"
+                  onClick={(event) => event.stopPropagation()}
+                  data-testid="mobile-menu-dialog"
+                >
+                  <h2 id={dialogTitleId} className="sr-only">
+                    Navigation menu
+                  </h2>
+                  <FlowingMenu
+                    items={links}
+                    activeHref={location.pathname}
+                    onItemClick={closeMenu}
+                    className="shadow-none"
+                    initialFocusIndex={0}
+                  />
+                  <div className="mt-6 flex flex-col gap-3">
+                    {user ? (
+                      <div className="flex flex-col gap-3" data-testid="mobile-auth-actions">
+                        {isAdmin && (
+                          <Button
+                            asChild
+                            variant="secondary"
+                            className="w-full justify-center gap-2"
+                            data-menu-item
+                          >
+                            <Link to="/admin" onClick={closeMenu}>
+                              <User className="h-4 w-4" />
+                              Admin
+                            </Link>
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-center gap-2"
+                          onClick={() => {
+                            closeMenu();
+                            void signOut();
+                          }}
+                          data-menu-item
+                        >
+                          <LogOut className="h-4 w-4" />
+                          Logout
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        asChild
+                        variant="secondary"
+                        className="w-full justify-center gap-2"
+                        data-menu-item
+                      >
+                        <Link to="/auth" onClick={closeMenu}>
+                          <LogIn className="h-4 w-4" />
+                          Login
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                  <div className="mt-6 flex justify-end">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-10 w-10 rounded-full"
+                      onClick={closeMenu}
+                      aria-label="Close menu"
+                    >
+                      <X className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       </div>
-
-      <AnimatePresence>
-        {open && (
-          <motion.button
-            key="mobile-overlay"
-            type="button"
-            aria-hidden="true"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.24, ease: "linear" }}
-            className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
-            onClick={closeMenu}
-          />
-        )}
-      </AnimatePresence>
     </header>
   );
 };
