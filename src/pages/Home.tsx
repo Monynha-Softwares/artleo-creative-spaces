@@ -1,17 +1,31 @@
+import { Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowRight, Sparkles, Palette, Eye } from "lucide-react";
 import { motion } from "framer-motion";
-import LiquidEtherBackground from "@/components/reactbits/LiquidEtherBackground";
 import { SplitText } from "@/components/reactbits/SplitText";
-import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
 import { PixelCard } from "@/components/reactbits/PixelCard";
 import { usePages } from "@/hooks/usePages";
 import { useSiteSetting } from "@/hooks/useSettings";
 import { useArtworks } from "@/hooks/useArtworks";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ArtworkSkeleton } from "@/components/ArtworkSkeleton";
+
+const LiquidEtherBackground = lazy(() => import("@/components/reactbits/LiquidEtherBackground"));
+const SpotlightCard = lazy(() => import("@/components/reactbits/SpotlightCard"));
+
+const HeroBackgroundFallback = () => (
+  <div className="absolute inset-0 bg-gradient-to-br from-[#1a1033] via-[#0a0d1f] to-[#06121f]">
+    <div className="absolute inset-0" style={{
+      backgroundImage:
+        "radial-gradient(at 20% 20%, rgba(109, 76, 255, 0.25), transparent 55%)," +
+        "radial-gradient(at 80% 10%, rgba(64, 134, 255, 0.18), transparent 60%)," +
+        "radial-gradient(at 50% 80%, rgba(180, 90, 255, 0.12), transparent 55%)",
+    }} />
+    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0d1f]/60 to-[#060913]" />
+  </div>
+);
 
 const FEATURED_DISCIPLINES = [
   { icon: Palette, title: "Motion Design", desc: "Dynamic visual narratives" },
@@ -27,8 +41,9 @@ const Home = () => {
     <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 sm:px-6">
-        {/* <SilkBackground /> */}
-        <LiquidEtherBackground />
+        <Suspense fallback={<HeroBackgroundFallback />}>
+          <LiquidEtherBackground />
+        </Suspense>
 
         {/* Content */}
         <div className="relative z-10 mx-auto w-full max-w-4xl text-center">
@@ -130,22 +145,24 @@ const Home = () => {
             ) : (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {FEATURED_DISCIPLINES.map((item, index) => (
-                  <SectionReveal key={index} delay={index * 0.1}>
-                    <SpotlightCard className="bg-surface-3/90 p-6 sm:p-8">
-                      <div className="flex flex-col gap-3 text-left sm:gap-4">
-                        <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                          <item.icon className="h-7 w-7" />
+                  <SectionReveal key={item.title} delay={index * 0.1}>
+                    <Suspense fallback={<ArtworkSkeleton />}>
+                      <SpotlightCard className="bg-surface-3/90 p-6 sm:p-8">
+                        <div className="flex flex-col gap-3 text-left sm:gap-4">
+                          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                            <item.icon className="h-7 w-7" />
+                          </div>
+                          <div>
+                            <h3 className="mb-1 text-[clamp(1.25rem,4.5vw,1.75rem)] font-bold leading-snug text-balance">
+                              {item.title}
+                            </h3>
+                            <p className="text-[clamp(1rem,3.2vw,1.1rem)] text-muted-foreground leading-relaxed">
+                              {item.desc}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="mb-1 text-[clamp(1.25rem,4.5vw,1.75rem)] font-bold leading-snug text-balance">
-                            {item.title}
-                          </h3>
-                          <p className="text-[clamp(1rem,3.2vw,1.1rem)] text-muted-foreground leading-relaxed">
-                            {item.desc}
-                          </p>
-                        </div>
-                      </div>
-                    </SpotlightCard>
+                      </SpotlightCard>
+                    </Suspense>
                   </SectionReveal>
                 ))}
               </div>

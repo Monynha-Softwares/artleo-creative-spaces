@@ -46,8 +46,16 @@ const ArtworkDetail = () => {
     );
   }
 
+  const InquireButton = () => (
+    <Link to="/contact" aria-label="Inquire about this artwork">
+      <Button variant="hero" size="lg" className="w-full sm:w-auto">
+        Inquire About This Work
+      </Button>
+    </Link>
+  );
+
   return (
-    <div className="min-h-screen overflow-x-hidden pt-24 pb-16">
+    <div className="min-h-screen overflow-x-hidden pt-24 pb-20">
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         {/* Back Button */}
         <SectionReveal>
@@ -74,7 +82,7 @@ const ArtworkDetail = () => {
           </SectionReveal>
 
           {/* Details */}
-          <div className="space-y-8">
+          <div className="flex flex-col gap-8">
             <SectionReveal delay={0.1}>
               <div>
                 <h1 className="mb-4 text-[clamp(1.85rem,6vw,3.25rem)] font-bold leading-tight text-balance">
@@ -135,17 +143,27 @@ const ArtworkDetail = () => {
               </SectionReveal>
             )}
 
-            <SectionReveal delay={0.4}>
-              <div className="pt-4">
-                <Link to="/contact">
-                  <Button variant="hero" size="lg" className="w-full sm:w-auto">
-                    Inquire About This Work
-                  </Button>
-                </Link>
+            <SectionReveal delay={0.4} className="hidden sm:block">
+              <div className="rounded-2xl border border-border/60 bg-surface-1/60 p-6 backdrop-blur">
+                <h3 className="text-lg font-semibold mb-3">Interested in this piece?</h3>
+                <p className="text-sm text-muted-foreground mb-5">
+                  Reach out to discuss commissions, licensing opportunities, or exhibition details.
+                </p>
+                <InquireButton />
               </div>
             </SectionReveal>
           </div>
         </div>
+
+        <SectionReveal delay={0.45} className="sm:hidden mt-10">
+          <div className="rounded-2xl border border-border/60 bg-surface-1/60 p-6 backdrop-blur">
+            <h3 className="text-lg font-semibold mb-3">Interested in this piece?</h3>
+            <p className="text-sm text-muted-foreground mb-5">
+              Reach out to discuss commissions, licensing opportunities, or exhibition details.
+            </p>
+            <InquireButton />
+          </div>
+        </SectionReveal>
       </div>
     </div>
   );
