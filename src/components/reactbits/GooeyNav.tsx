@@ -1,9 +1,8 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X, LogIn, LogOut, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { FlowingMenu } from "./FlowingMenu";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
@@ -37,28 +36,162 @@ export const GooeyNav = () => {
   const { user, isAdmin, signOut } = useAuth();
 
   const menuId = "mobile-navigation";
+  const menuTitleId = useId();
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [open]);
+
+  const getFocusableElements = () => {
+    if (!menuRef.current) return [] as HTMLElement[];
+    const selectors = [
+      "a[href]",
+      "button:not([disabled])",
+      "[tabindex]:not([tabindex='-1'])",
+    ].join(",");
+    return Array.from(
+      menuRef.current.querySelectorAll<HTMLElement>(selectors),
+    ).filter((element) => !element.hasAttribute("data-focus-guard"));
+  };
+
+  const focusFirstElement = () => {
+    const focusable = getFocusableElements();
+    if (focusable.length) {
+      focusable[0].focus();
+    }
+  };
+
+  const moveFocus = (direction: 1 | -1) => {
+    const focusable = getFocusableElements().filter((element) =>
+      element.dataset.menuItem === "true",
+    );
+    if (!focusable.length) return;
+    const index = focusable.indexOf(document.activeElement as HTMLElement);
+    const nextIndex = index === -1 ? 0 : (index + direction + focusable.length) % focusable.length;
+    focusable[nextIndex].focus();
+  };
+
+  useEffect(() => {
+    if (!open) {
+      if (previousFocusRef.current) {
+        previousFocusRef.current.focus();
+      }
+      return;
+    }
+
+    previousFocusRef.current = document.activeElement as HTMLElement;
+    const focusTimer = window.setTimeout(() => {
+      focusFirstElement();
+    }, 0);
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpen(false);
+        return;
+      }
+
+      if (event.key === "Tab") {
+        const focusable = getFocusableElements();
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const current = document.activeElement as HTMLElement | null;
+
+        if (!event.shiftKey && current === last) {
+          event.preventDefault();
+          first.focus();
+        } else if (event.shiftKey && current === first) {
+          event.preventDefault();
+          last.focus();
+        }
+      }
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        moveFocus(1);
+      }
+
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        moveFocus(-1);
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [open]);
 
   const isActive = (href: string) => location.pathname === href;
 
   const toggleMenu = () => setOpen((prev) => !prev);
-  const closeMenu = () => setOpen(false);
+  const closeMenu = useCallback(() => setOpen(false), []);
+
+  const authActions = useMemo(() => {
+    if (user) {
+      return (
+        <div className="flex flex-col gap-2 border-t border-border/60 pt-3" data-testid="mobile-auth-actions">
+          {isAdmin && (
+            <Link
+              to="/admin"
+              onClick={closeMenu}
+              className="flex items-center justify-between rounded-xl border border-border/50 bg-card/60 px-4 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary/60 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              data-menu-item="true"
+              role="menuitem"
+            >
+              <span>Admin</span>
+              <User className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              closeMenu();
+              void signOut();
+            }}
+            className="flex items-center justify-between rounded-xl border border-border/50 bg-card/60 px-4 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary/60 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            data-menu-item="true"
+            role="menuitem"
+          >
+            <span>Logout</span>
+            <LogOut className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        to="/auth"
+        onClick={closeMenu}
+        className="flex items-center justify-between rounded-xl border border-border/50 bg-card/60 px-4 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary/60 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        data-menu-item="true"
+        role="menuitem"
+      >
+        <span>Login</span>
+        <LogIn className="h-4 w-4" aria-hidden="true" />
+      </Link>
+    );
+  }, [closeMenu, isAdmin, signOut, user]);
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6">
@@ -136,6 +269,7 @@ export const GooeyNav = () => {
                 aria-expanded={open}
                 aria-haspopup="true"
                 aria-label={open ? "Close navigation" : "Open navigation"}
+                ref={triggerRef}
               >
                 {open ? <X /> : <Menu />}
               </button>
@@ -147,18 +281,56 @@ export const GooeyNav = () => {
               <motion.div
                 key="mobile-menu"
                 id={menuId}
-                initial={{ opacity: 0, y: -12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-x-0 top-full z-50 mt-3 md:hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={menuTitleId}
+                initial={{ opacity: 0, y: -16, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -16, scale: 0.98 }}
+                transition={{ duration: reduceMotion ? 0 : 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute inset-x-0 top-full z-50 mt-3 origin-top md:hidden"
+                ref={menuRef}
+                data-testid="mobile-nav-panel"
               >
-                <FlowingMenu
-                  items={links}
-                  activeHref={location.pathname}
-                  onItemClick={closeMenu}
-                  className="shadow-[0_20px_60px_rgba(15,23,42,0.45)]"
-                />
+                <div className="rounded-3xl border border-border/70 bg-background/95 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.65)] backdrop-blur-xl">
+                  <div className="sr-only" id={menuTitleId}>
+                    Main navigation
+                  </div>
+                  <nav aria-label="Mobile" role="menu" className="flex flex-col gap-2">
+                    {links.map((link) => {
+                      const active = isActive(link.href);
+                      return (
+                        <Link
+                          key={link.href}
+                          to={link.href}
+                          onClick={closeMenu}
+                          className={cn(
+                            "flex items-center justify-between rounded-xl border px-4 py-3 text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                            active
+                              ? "border-primary/70 bg-primary/20 text-primary"
+                              : "border-border/60 bg-card/60 text-muted-foreground hover:border-primary/60 hover:text-primary",
+                          )}
+                          data-menu-item="true"
+                          role="menuitem"
+                        >
+                          <span>{link.label}</span>
+                          <span
+                            aria-hidden="true"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/70 via-secondary/60 to-primary/70 text-sm font-semibold text-foreground/80"
+                          >
+                            {link.label.charAt(0)}
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                  <div className="mt-4" role="menu" aria-label="Account">
+                    {authActions}
+                  </div>
+                  <p className="mt-4 text-xs text-muted-foreground/80">
+                    Press <span className="font-medium">Esc</span> to close or use the arrow keys to move between links.
+                  </p>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -177,6 +349,7 @@ export const GooeyNav = () => {
             transition={{ duration: reduceMotion ? 0 : 0.24, ease: "linear" }}
             className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
             onClick={closeMenu}
+            data-focus-guard="true"
           />
         )}
       </AnimatePresence>
