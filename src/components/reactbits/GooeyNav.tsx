@@ -1,11 +1,11 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X, LogIn, LogOut, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { FlowingMenu } from "./FlowingMenu";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const links = [
   {
@@ -35,30 +35,177 @@ export const GooeyNav = () => {
   const location = useLocation();
   const reduceMotion = useReducedMotion();
   const { user, isAdmin, signOut } = useAuth();
+  const isMobile = useIsMobile();
+
+  const menuContainerRef = useRef<HTMLDivElement | null>(null);
+  const menuCloseButtonRef = useRef<HTMLButtonElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   const menuId = "mobile-navigation";
+  const dialogId = `${menuId}-panel`;
+  const dialogTitleId = `${menuId}-title`;
+
+  const getMenuItems = useCallback(() => {
+    if (!menuContainerRef.current) {
+      return [] as HTMLElement[];
+    }
+
+    return Array.from(
+      menuContainerRef.current.querySelectorAll<HTMLElement>('[data-menu-item="true"]'),
+    );
+  }, []);
+
+  const getFocusableElements = useCallback(() => {
+    const menuItems = getMenuItems();
+    if (menuCloseButtonRef.current) {
+      return [...menuItems, menuCloseButtonRef.current];
+    }
+    return menuItems;
+  }, [getMenuItems]);
 
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
+    if (!isMobile && open) {
+      setOpen(false);
+    }
+  }, [isMobile, open]);
+
+  useEffect(() => {
     if (!open) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        event.preventDefault();
         setOpen(false);
+        return;
+      }
+
+      if (event.key === "Tab") {
+        const focusableElements = getFocusableElements();
+        if (!focusableElements.length) return;
+
+        const activeElement = document.activeElement as HTMLElement | null;
+        const currentIndex = focusableElements.indexOf(activeElement ?? focusableElements[0]);
+        const direction = event.shiftKey ? -1 : 1;
+        const nextIndex =
+          currentIndex === -1
+            ? event.shiftKey
+              ? focusableElements.length - 1
+              : 0
+            : (currentIndex + direction + focusableElements.length) % focusableElements.length;
+
+        event.preventDefault();
+        const target = focusableElements[nextIndex];
+        setTimeout(() => target?.focus({ preventScroll: true }), 0);
+        return;
+      }
+
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        const menuItems = getMenuItems();
+        if (!menuItems.length) return;
+
+        const direction = event.key === "ArrowDown" ? 1 : -1;
+        const activeElement = document.activeElement as HTMLElement | null;
+        const currentIndex = menuItems.findIndex((item) => item === activeElement);
+        const nextIndex = currentIndex === -1 ? (direction === 1 ? 0 : menuItems.length - 1) : (currentIndex + direction + menuItems.length) % menuItems.length;
+
+        event.preventDefault();
+        menuItems[nextIndex]?.focus();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open]);
+  }, [getFocusableElements, getMenuItems, open]);
+
+  useEffect(() => {
+    if (!open) {
+      const previouslyFocused = previouslyFocusedRef.current;
+      previouslyFocused?.focus({ preventScroll: true });
+      previouslyFocusedRef.current = null;
+      return;
+    }
+
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+
+    const focusableElements = getFocusableElements();
+    focusableElements[0]?.focus();
+
+    const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight;
+    const scrollBarGap = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = "hidden";
+    if (scrollBarGap > 0) {
+      document.body.style.paddingRight = `${scrollBarGap}px`;
+    }
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
+    };
+  }, [getFocusableElements, open]);
 
   const isActive = (href: string) => location.pathname === href;
 
   const toggleMenu = () => setOpen((prev) => !prev);
   const closeMenu = () => setOpen(false);
+
+  const authActions = useMemo(() => {
+    if (user) {
+      return (
+        <>
+          {isAdmin && (
+            <li>
+              <Link
+                to="/admin"
+                role="menuitem"
+                data-menu-item="true"
+                className="block w-full rounded-2xl px-4 py-3 text-left text-base font-medium text-foreground transition-colors hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                onClick={closeMenu}
+              >
+                Admin
+              </Link>
+            </li>
+          )}
+          <li>
+            <button
+              type="button"
+              role="menuitem"
+              data-menu-item="true"
+              className="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              onClick={() => {
+                void signOut();
+                closeMenu();
+              }}
+            >
+              Logout
+              <LogOut className="h-5 w-5" aria-hidden="true" />
+            </button>
+          </li>
+        </>
+      );
+    }
+
+    return (
+      <li>
+        <Link
+          to="/auth"
+          role="menuitem"
+          data-menu-item="true"
+          className="block w-full rounded-2xl px-4 py-3 text-left text-base font-medium text-foreground transition-colors hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          onClick={closeMenu}
+        >
+          <span className="flex items-center justify-between">
+            Login
+            <LogIn className="h-5 w-5" aria-hidden="true" />
+          </span>
+        </Link>
+      </li>
+    );
+  }, [closeMenu, isAdmin, signOut, user]);
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6">
@@ -132,10 +279,11 @@ export const GooeyNav = () => {
               <button
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-card/70 p-2 text-foreground transition-colors hover:border-primary/80 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none md:hidden"
                 onClick={toggleMenu}
-                aria-controls={menuId}
+                aria-controls={dialogId}
                 aria-expanded={open}
                 aria-haspopup="true"
                 aria-label={open ? "Close navigation" : "Open navigation"}
+                data-state={open ? "open" : "closed"}
               >
                 {open ? <X /> : <Menu />}
               </button>
@@ -143,43 +291,107 @@ export const GooeyNav = () => {
           </nav>
 
           <AnimatePresence>
-            {open && (
-              <motion.div
-                key="mobile-menu"
-                id={menuId}
-                initial={{ opacity: 0, y: -12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-x-0 top-full z-50 mt-3 md:hidden"
-              >
-                <FlowingMenu
-                  items={links}
-                  activeHref={location.pathname}
-                  onItemClick={closeMenu}
-                  className="shadow-[0_20px_60px_rgba(15,23,42,0.45)]"
+            {open && isMobile && (
+              <>
+                <motion.button
+                  key="mobile-overlay"
+                  type="button"
+                  aria-hidden="true"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.24, ease: "linear" }}
+                  className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm"
+                  onClick={closeMenu}
                 />
-              </motion.div>
+                <motion.div
+                  key="mobile-menu"
+                  id={dialogId}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby={dialogTitleId}
+                  ref={menuContainerRef}
+                  data-testid="mobile-menu-panel"
+                  initial={{ opacity: 0, y: -16, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -16, scale: 0.96 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-x-0 top-full z-50 mt-3 px-4 md:hidden"
+                >
+                  <div className="mx-auto w-full max-w-md rounded-3xl border border-border/70 bg-surface-1/95 shadow-[0_24px_60px_rgba(15,23,42,0.45)] backdrop-blur-xl">
+                    <div className="flex items-center justify-between gap-4 border-b border-border/60 px-5 py-4">
+                      <p id={dialogTitleId} className="text-base font-semibold text-foreground">
+                        Navigation
+                      </p>
+                      <button
+                        ref={menuCloseButtonRef}
+                        type="button"
+                        data-close="true"
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 text-foreground transition-colors hover:border-primary/70 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                        onClick={closeMenu}
+                        aria-label="Close menu"
+                      >
+                        <X aria-hidden="true" />
+                      </button>
+                    </div>
+                    <nav
+                      id={menuId}
+                      role="menu"
+                      aria-labelledby={dialogTitleId}
+                      className="px-5 py-4"
+                    >
+                      <div
+                        tabIndex={0}
+                        className="sr-only"
+                        data-focus-guard="start"
+                        onFocus={() => {
+                          const focusable = getFocusableElements();
+                          const target = focusable[focusable.length - 1];
+                          target?.focus({ preventScroll: true });
+                        }}
+                      />
+                      <ul className="flex flex-col gap-2" data-testid="mobile-menu-items">
+                        {links.map((link) => (
+                          <li key={link.href}>
+                            <Link
+                              to={link.href}
+                              role="menuitem"
+                              data-menu-item="true"
+                              className={cn(
+                                "block w-full rounded-2xl px-4 py-3 text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-colors",
+                                isActive(link.href)
+                                  ? "bg-primary/20 text-foreground shadow-[0_0_1px_1px_rgba(129,140,248,0.25)]"
+                                  : "text-muted-foreground hover:bg-foreground/10 hover:text-foreground",
+                              )}
+                              onClick={closeMenu}
+                            >
+                              {link.label}
+                            </Link>
+                          </li>
+                        ))}
+                        <li className="mt-1 border-t border-border/60 pt-3 text-sm uppercase tracking-widest text-muted-foreground">
+                          Account
+                        </li>
+                        {authActions}
+                      </ul>
+                      <div
+                        tabIndex={0}
+                        className="sr-only"
+                        data-focus-guard="end"
+                        onFocus={() => {
+                          const focusable = getFocusableElements();
+                          const target = focusable[0];
+                          target?.focus({ preventScroll: true });
+                        }}
+                      />
+                    </nav>
+                  </div>
+                </motion.div>
+              </>
             )}
           </AnimatePresence>
         </div>
       </div>
-
-      <AnimatePresence>
-        {open && (
-          <motion.button
-            key="mobile-overlay"
-            type="button"
-            aria-hidden="true"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.24, ease: "linear" }}
-            className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
-            onClick={closeMenu}
-          />
-        )}
-      </AnimatePresence>
     </header>
   );
 };
