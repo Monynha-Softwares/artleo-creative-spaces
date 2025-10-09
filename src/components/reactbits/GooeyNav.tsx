@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X, LogIn, LogOut, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { FlowingMenu } from "./FlowingMenu";
@@ -37,22 +37,124 @@ export const GooeyNav = () => {
   const { user, isAdmin, signOut } = useAuth();
 
   const menuId = "mobile-navigation";
+  const menuLabelId = "mobile-navigation-title";
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const menuSectionRef = useRef<HTMLElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+
+  const getFocusableElements = useCallback((container: HTMLElement | null) => {
+    if (!container) {
+      return [] as HTMLElement[];
+    }
+
+    const focusableSelectors = [
+      "a[href]",
+      "button:not([disabled])",
+      "[role='menuitem']",
+      "[tabindex]:not([tabindex='-1'])",
+    ];
+
+    const nodes = Array.from(
+      container.querySelectorAll<HTMLElement>(focusableSelectors.join(",")),
+    );
+
+    return nodes.filter((node) => !node.hasAttribute("data-focus-guard"));
+  }, []);
 
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        event.preventDefault();
         setOpen(false);
+        return;
+      }
+
+      if (event.key === "Tab") {
+        const focusable = getFocusableElements(menuSectionRef.current);
+        if (focusable.length === 0) {
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey) {
+          if (document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          }
+        } else if (document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        const container = menuSectionRef.current;
+        const items = container
+          ? Array.from(container.querySelectorAll<HTMLElement>("[data-menu-item]"))
+          : [];
+
+        if (!items.length) {
+          return;
+        }
+
+        const current = document.activeElement as HTMLElement | null;
+        const index = items.findIndex((item) => item === current);
+        if (index === -1) {
+          return;
+        }
+
+        event.preventDefault();
+
+        if (event.key === "ArrowDown") {
+          const next = items[(index + 1) % items.length];
+          next.focus();
+        } else {
+          const prev = items[(index - 1 + items.length) % items.length];
+          prev.focus();
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [getFocusableElements, open]);
+
+  useEffect(() => {
+    if (!open) {
+      if (previouslyFocusedRef.current) {
+        previouslyFocusedRef.current.focus({ preventScroll: true });
+        previouslyFocusedRef.current = null;
+      }
+      return;
+    }
+
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+
+    const focusable = getFocusableElements(menuSectionRef.current);
+    focusable[0]?.focus({ preventScroll: true });
+  }, [getFocusableElements, open]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
   }, [open]);
 
   const isActive = (href: string) => location.pathname === href;
@@ -134,8 +236,9 @@ export const GooeyNav = () => {
                 onClick={toggleMenu}
                 aria-controls={menuId}
                 aria-expanded={open}
-                aria-haspopup="true"
+                aria-haspopup="dialog"
                 aria-label={open ? "Close navigation" : "Open navigation"}
+                ref={triggerRef}
               >
                 {open ? <X /> : <Menu />}
               </button>
@@ -144,22 +247,43 @@ export const GooeyNav = () => {
 
           <AnimatePresence>
             {open && (
-              <motion.div
+              <motion.section
                 key="mobile-menu"
                 id={menuId}
+                ref={menuSectionRef}
                 initial={{ opacity: 0, y: -12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-x-0 top-full z-50 mt-3 md:hidden"
+                className="absolute inset-x-0 top-full z-50 mt-3 rounded-3xl md:hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={menuLabelId}
               >
+                <div className="sr-only" id={menuLabelId}>
+                  Art Leo navigation
+                </div>
                 <FlowingMenu
                   items={links}
                   activeHref={location.pathname}
                   onItemClick={closeMenu}
                   className="shadow-[0_20px_60px_rgba(15,23,42,0.45)]"
+                  menuLabel="Mobile navigation"
+                  itemRole="menuitem"
                 />
-              </motion.div>
+                <div className="flex justify-end bg-surface-1/95 px-6 pb-4 pt-3">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground hover:text-primary"
+                    onClick={closeMenu}
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                    Close menu
+                  </Button>
+                </div>
+              </motion.section>
             )}
           </AnimatePresence>
         </div>
@@ -167,9 +291,8 @@ export const GooeyNav = () => {
 
       <AnimatePresence>
         {open && (
-          <motion.button
+          <motion.div
             key="mobile-overlay"
-            type="button"
             aria-hidden="true"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -177,6 +300,7 @@ export const GooeyNav = () => {
             transition={{ duration: reduceMotion ? 0 : 0.24, ease: "linear" }}
             className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
             onClick={closeMenu}
+            role="presentation"
           />
         )}
       </AnimatePresence>
