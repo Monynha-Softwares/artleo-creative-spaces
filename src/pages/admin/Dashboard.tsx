@@ -1,110 +1,93 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { Navigate, Link } from "react-router-dom";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import { LayoutDashboard, Palette, FileText, CalendarRange, Mail } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Palette, Calendar, Mail, Settings, ArrowRight } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { fetchTableCount } from "@/integrations/supabase/admin";
 
-const Dashboard = () => {
-  const { isAdmin, isLoading } = useAuth();
+const DASHBOARD_TABLES = [
+  { name: "artworks", label: "Artworks", icon: Palette, to: "/admin/artworks" },
+  { name: "pages", label: "Pages", icon: FileText, to: "/admin/pages" },
+  { name: "exhibitions", label: "Exhibitions", icon: CalendarRange, to: "/admin/exhibitions" },
+  { name: "contact_messages", label: "Messages", icon: Mail, to: "/admin/messages" },
+] as const;
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="mt-4 text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return <Navigate to="/" replace />;
-  }
-
-  const adminSections = [
-    {
-      title: "Artworks",
-      description: "Manage your portfolio pieces",
-      icon: Palette,
-      href: "/admin/artworks",
-      color: "text-purple-500",
+export const Dashboard = () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "dashboard", "counts"],
+    queryFn: async () => {
+      const results = await Promise.all(
+        DASHBOARD_TABLES.map(async (table) => ({
+          name: table.name,
+          count: await fetchTableCount(table.name),
+        })),
+      );
+      return results.reduce<Record<string, number>>((acc, item) => {
+        acc[item.name] = item.count;
+        return acc;
+      }, {});
     },
-    {
-      title: "Exhibitions",
-      description: "Update your timeline and events",
-      icon: Calendar,
-      href: "/admin/exhibitions",
-      color: "text-blue-500",
-    },
-    {
-      title: "Contact Messages",
-      description: "View and respond to inquiries",
-      icon: Mail,
-      href: "/admin/messages",
-      color: "text-green-500",
-    },
-    {
-      title: "Settings",
-      description: "Configure site settings",
-      icon: Settings,
-      href: "/admin/settings",
-      color: "text-orange-500",
-    },
-  ];
+  });
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-surface-0 to-surface-1 px-4 pt-24 pb-16 sm:px-6">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">
-            Manage your portfolio content and settings
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-          {adminSections.map((section) => (
-            <Card key={section.href} className="group hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className={`rounded-lg bg-surface-2 p-3 ${section.color}`}>
-                    <section.icon className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <CardTitle>{section.title}</CardTitle>
-                    <CardDescription>{section.description}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Link to={section.href}>
-                  <Button variant="outline" className="w-full group-hover:border-primary">
-                    Manage
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Quick Access</CardTitle>
-            <CardDescription>
-              Need to edit content directly? Access the backend dashboard
-            </CardDescription>
+  const summaryCards = useMemo(() => {
+    return DASHBOARD_TABLES.map((table) => {
+      const Icon = table.icon;
+      return (
+        <Card key={table.name} className="border-border/60 bg-background/80 backdrop-blur">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base font-semibold">{table.label}</CardTitle>
+            <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              For advanced database operations and direct table editing, you can access the
-              Lovable Cloud backend interface.
-            </p>
-            <Button variant="outline">View Backend Dashboard</Button>
+          <CardContent className="flex flex-col gap-4">
+            <div className="text-3xl font-bold tracking-tight">
+              {isLoading ? <Skeleton className="h-8 w-12" /> : data?.[table.name] ?? 0}
+            </div>
+            <Button asChild variant="outline" size="sm" className="justify-center">
+              <Link to={table.to}>Manage {table.label.toLowerCase()}</Link>
+            </Button>
           </CardContent>
         </Card>
+      );
+    });
+  }, [data, isLoading]);
+
+  return (
+    <div className="space-y-8">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium text-primary/80">Welcome back</p>
+        <h1 className="flex items-center gap-2 text-3xl font-semibold tracking-tight">
+          <LayoutDashboard className="h-6 w-6" aria-hidden="true" /> Admin dashboard
+        </h1>
+        <p className="max-w-2xl text-muted-foreground">
+          Overview of your content. Manage artworks, pages, exhibitions, contact messages, and global settings in one place.
+        </p>
       </div>
+      <section>
+        <h2 className="mb-4 text-xl font-semibold">Content overview</h2>
+        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">{summaryCards}</div>
+      </section>
+      <section>
+        <Card className="border-border/60 bg-background/80 backdrop-blur">
+          <CardHeader>
+            <CardTitle>Quick create</CardTitle>
+            <CardDescription>Jump directly into creating new content.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-3">
+            <Button asChild>
+              <Link to="/admin/artworks/new">New artwork</Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link to="/admin/pages/new">New page</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/admin/exhibitions/new">New exhibition</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </section>
     </div>
   );
 };

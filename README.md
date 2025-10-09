@@ -41,6 +41,43 @@ npm run dev
 
 The app boots on `http://localhost:5173` by default. Hot Module Reloading (HMR) is enabled out of the box.
 
+### Supabase configuration
+
+The admin panel and dynamic content rely on Supabase. Configure the environment variables before starting the dev server:
+
+```bash
+cp .env.example .env.local
+```
+
+Populate the following keys (available in the Supabase dashboard):
+
+```bash
+VITE_SUPABASE_URL=<your-project-url>
+VITE_SUPABASE_PUBLISHABLE_KEY=<your-anon-key>
+```
+
+To run Supabase locally, install the CLI and start the stack:
+
+```bash
+npx supabase start
+```
+
+Apply migrations if you add new database objects:
+
+```bash
+npx supabase db push
+```
+
+Seed an admin user once per environment. Create a user via the Supabase Auth dashboard (or CLI) and insert an admin role:
+
+```sql
+insert into user_roles (user_id, role)
+values ('<user-uuid>', 'admin')
+on conflict (user_id, role) do nothing;
+```
+
+You can add additional collaborators by repeating the insertion with the target user ID.
+
 ### Production build
 
 ```bash
@@ -58,6 +95,20 @@ npm run lint
 ```
 
 Linting ensures TypeScript, React, and accessibility conventions stay consistent.
+
+Run unit tests with:
+
+```bash
+npm test
+```
+
+### Admin panel
+
+- Visit `http://localhost:5173/admin` while authenticated with an admin role.
+- The panel includes sections for artworks, pages, exhibitions, contact messages, settings, and user role management.
+- Lists and forms use React Query for caching; mutations automatically refresh the relevant tables.
+- Image uploads for artworks are stored in the `artwork-images` Supabase storage bucket.
+- Non-admin visitors are redirected to `/auth`.
 
 ## Project structure
 
