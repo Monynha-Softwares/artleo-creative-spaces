@@ -9,8 +9,13 @@ export const RippleGridBackground = ({ className }: RippleGridBackgroundProps) =
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className={cn("absolute inset-0 overflow-hidden rounded-[2.5rem]", className)} aria-hidden>
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0418] via-[#050912] to-[#02050d]" />
+    <div
+      className={cn(
+        "absolute inset-0 overflow-hidden rounded-[2.5rem] bg-transparent",
+        className,
+      )}
+      aria-hidden
+    >
       <motion.div
         className="absolute inset-0"
         animate={
@@ -37,6 +42,7 @@ export const RippleGridBackground = ({ className }: RippleGridBackgroundProps) =
           opacity: 0.85,
         }}
       />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-transparent mix-blend-soft-light" />
     </div>
   );
 };
