@@ -68,23 +68,25 @@ const Contact = () => {
             <h1 className="mb-4 text-[clamp(2rem,7vw,3.5rem)] font-bold leading-tight text-balance">
               Get in <span className="bg-gradient-primary bg-clip-text text-transparent">Touch</span>
             </h1>
-            <p className="mx-auto max-w-2xl text-[clamp(1rem,3.4vw,1.15rem)] text-muted-foreground leading-relaxed text-balance">
+            <p className="mx-auto max-w-2xl text-[clamp(1rem,3.4vw,1.15rem)] text-white/85 leading-relaxed text-balance">
               Have a project in mind or just want to say hello? I'd love to hear from you.
             </p>
           </div>
         </SectionReveal>
 
-        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-[2rem] border border-border/60 bg-surface-0 p-2 sm:rounded-[2.5rem] sm:p-4 shadow-inset">
+        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-[2rem] border border-white/15 bg-transparent p-2 sm:rounded-[2.5rem] sm:p-4">
           <RippleGridBackground />
-          <div className="relative z-10 rounded-[1.75rem] bg-surface-1 p-6 shadow-lg sm:rounded-[2.25rem] sm:p-10">
+          <div className="relative z-10 rounded-[1.75rem] p-6 text-white backdrop-blur-2xl sm:rounded-[2.25rem] sm:p-10">
             <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
               {/* Contact Info */}
               <div className="col-span-1">
                 <SectionReveal delay={0.1}>
                   <div className="space-y-8">
                     <div>
-                      <h2 className="mb-6 text-[clamp(1.5rem,5.5vw,2.5rem)] font-bold leading-tight">Let's Connect</h2>
-                      <p className="mb-6 text-[clamp(1rem,3.3vw,1.1rem)] text-muted-foreground leading-relaxed">
+                      <h2 className="mb-6 text-[clamp(1.5rem,5.5vw,2.5rem)] font-bold leading-tight text-white">
+                        Let's Connect
+                      </h2>
+                      <p className="mb-6 text-[clamp(1rem,3.3vw,1.1rem)] text-white/80 leading-relaxed">
                         Whether you're interested in collaborating, commissioning work, or just
                         want to chat about art and technology, feel free to reach out through
                         the form or my social channels.
