@@ -24,7 +24,7 @@ vi.mock("gsap", () => ({
 describe("GooeyNav mobile menu", () => {
   const setup = () => {
     const utils = render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
         <GooeyNav />
       </MemoryRouter>,
     );

@@ -5,3 +5,7 @@
   height: 100%;
   touch-action: none;
 }
+
+.liquid-ether-container canvas {
+  display: block;
+}
