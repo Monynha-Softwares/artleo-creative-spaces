@@ -118,7 +118,7 @@ const Home = () => {
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {featuredArtworks.slice(0, 3).map((artwork, index) => (
                   <SectionReveal key={artwork.id} delay={index * 0.1}>
-                    <Link to={`/art/${artwork.slug}`} className="block">
+                    <Link to={`/portfolio/${artwork.slug}`}>
                       <PixelCard
                         title={artwork.title}
                         imageUrl={artwork.cover_url}
