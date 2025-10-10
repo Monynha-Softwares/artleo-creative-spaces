@@ -14,6 +14,18 @@ export default defineConfig(() => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          query: ["@tanstack/react-query"],
+          three: ["three", "@react-three/fiber", "@react-three/drei"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1500,
+  },
   test: {
     environment: "jsdom",
     globals: true,

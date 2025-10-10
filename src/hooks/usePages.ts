@@ -1,15 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 
 interface PageContent {
   title: string;
-  content: any;
+  content: Json;
   meta_title?: string;
   meta_description?: string;
 }
 
+type PagesQueryResult = PageContent[] | (PageContent | null);
+
 export const usePages = (slug?: string) => {
-  return useQuery({
+  return useQuery<PagesQueryResult>({
     queryKey: ["pages", slug],
     queryFn: async () => {
       if (!slug) {
@@ -19,7 +22,7 @@ export const usePages = (slug?: string) => {
           .eq("status", "published");
 
         if (error) throw error;
-        return data;
+        return data as PageContent[];
       }
 
       const { data, error } = await supabase
