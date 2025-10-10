@@ -4,7 +4,9 @@ This guide will help you set up the Art Leo portfolio website locally and in pro
 
 ## Prerequisites
 
-- Node.js 18+ and npm/bun
+- Node.js 18+
+- [pnpm](https://pnpm.io/) 10 (enable with `corepack use pnpm@10.5.2`)
+- bun (optional)
 - A Lovable Cloud account (Supabase backend is already configured)
 
 ## Local Development Setup
@@ -14,10 +16,12 @@ This guide will help you set up the Art Leo portfolio website locally and in pro
 ```bash
 git clone <repository-url>
 cd artleo-creative-spaces-main
-npm install
-# or
+pnpm install
+# or, if you prefer bun
 bun install
 ```
+
+> **Note:** Running scripts with plain npm in environments that export `npm_config_http_proxy` emits deprecation warnings. pnpm avoids those messages by default.
 
 ### 2. Environment Variables
 
@@ -62,7 +66,7 @@ The database was seeded during migration with sample content. To add more:
 ### 6. Start Development Server
 
 ```bash
-npm run dev
+pnpm run dev
 # or
 bun dev
 ```

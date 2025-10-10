@@ -1,17 +1,19 @@
+import { useEffect, useState, Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowRight, Sparkles, Palette, Eye } from "lucide-react";
 import { motion } from "framer-motion";
-import LiquidEtherBackground from "@/components/reactbits/LiquidEtherBackground";
+import LiquidEtherFallback from "@/components/reactbits/LiquidEtherFallback";
 import { SplitText } from "@/components/reactbits/SplitText";
 import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
 import { PixelCard } from "@/components/reactbits/PixelCard";
-import { usePages } from "@/hooks/usePages";
 import { useSiteSetting } from "@/hooks/useSettings";
 import { useArtworks } from "@/hooks/useArtworks";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ArtworkSkeleton } from "@/components/ArtworkSkeleton";
+
+const LiquidEtherBackground = lazy(() => import("@/components/reactbits/LiquidEtherBackground"));
 
 const FEATURED_DISCIPLINES = [
   { icon: Palette, title: "Motion Design", desc: "Dynamic visual narratives" },
@@ -20,15 +22,27 @@ const FEATURED_DISCIPLINES = [
 ] as const;
 
 const Home = () => {
-  const { data: homePage } = usePages("home");
+  const [canRenderAnimatedBackground, setCanRenderAnimatedBackground] = useState(false);
   const tagline = useSiteSetting("site_tagline", "Digital Artist & Creative Developer");
   const { data: featuredArtworks, isLoading: artworksLoading } = useArtworks({ featured: true });
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setCanRenderAnimatedBackground(true), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 sm:px-6">
         {/* <SilkBackground /> */}
-        <LiquidEtherBackground />
+        {canRenderAnimatedBackground ? (
+          <Suspense fallback={<LiquidEtherFallback />}>
+            <LiquidEtherBackground />
+          </Suspense>
+        ) : (
+          <LiquidEtherFallback />
+        )}
 
         {/* Content */}
         <div className="relative z-10 mx-auto w-full max-w-4xl text-center">
@@ -118,7 +132,7 @@ const Home = () => {
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {featuredArtworks.slice(0, 3).map((artwork, index) => (
                   <SectionReveal key={artwork.id} delay={index * 0.1}>
-                    <Link to={`/portfolio/${artwork.slug}`}>
+                    <Link to={`/art/${artwork.slug}`}>
                       <PixelCard
                         title={artwork.title}
                         imageUrl={artwork.cover_url}

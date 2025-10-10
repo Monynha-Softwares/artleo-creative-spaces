@@ -137,8 +137,8 @@ const ArtworkDetail = () => {
 
             <SectionReveal delay={0.4}>
               <div className="pt-4">
-                <Link to="/contact">
-                  <Button variant="hero" size="lg" className="w-full sm:w-auto">
+                <Link to="/contact" className="block w-full sm:w-auto">
+                  <Button variant="hero" size="lg" className="w-full">
                     Inquire About This Work
                   </Button>
                 </Link>

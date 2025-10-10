@@ -25,18 +25,21 @@ Art Leo is a Vite + React portfolio that pairs cinematic motion design with inte
 ### Prerequisites
 
 - Node.js 18.18 or newer (Node 20 LTS recommended)
-- npm 9+ (bundled with recent Node.js releases)
+- [pnpm](https://pnpm.io/) 10 (install with `corepack use pnpm@10.5.2`)
+
+> [!TIP]
+> Using pnpm avoids noisy npm proxy warnings when running the scripts in this repo.
 
 ### Installation
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### Local development
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 The app boots on `http://localhost:5173` by default. Hot Module Reloading (HMR) is enabled out of the box.
@@ -44,17 +47,17 @@ The app boots on `http://localhost:5173` by default. Hot Module Reloading (HMR) 
 ### Production build
 
 ```bash
-npm run build
-npm run preview
+pnpm run build
+pnpm run preview
 ```
 
-- `npm run build` compiles the project for production.
-- `npm run preview` serves the production build locally for smoke testing.
+- `pnpm run build` compiles the project for production.
+- `pnpm run preview` serves the production build locally for smoke testing.
 
 ### Quality checks
 
 ```bash
-npm run lint
+pnpm run lint
 ```
 
 Linting ensures TypeScript, React, and accessibility conventions stay consistent.
