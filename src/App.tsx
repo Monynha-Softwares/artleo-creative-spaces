@@ -13,6 +13,10 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/admin/Dashboard";
+import ArtworksManager from "./pages/admin/ArtworksManager";
+import ExhibitionsManager from "./pages/admin/ExhibitionsManager";
+import MessagesManager from "./pages/admin/MessagesManager";
+import SettingsManager from "./pages/admin/SettingsManager";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +38,10 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<Dashboard />} />
+            <Route path="/admin/artworks" element={<ArtworksManager />} />
+            <Route path="/admin/exhibitions" element={<ExhibitionsManager />} />
+            <Route path="/admin/messages" element={<MessagesManager />} />
+            <Route path="/admin/settings" element={<SettingsManager />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
