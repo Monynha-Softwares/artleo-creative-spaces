@@ -74,7 +74,7 @@ const ArtworkDetail = () => {
           </SectionReveal>
 
           {/* Details */}
-          <div className="space-y-8">
+          <div className="flex flex-col gap-8 lg:gap-10">
             <SectionReveal delay={0.1}>
               <div>
                 <h1 className="mb-4 text-[clamp(1.85rem,6vw,3.25rem)] font-bold leading-tight text-balance">
@@ -135,10 +135,10 @@ const ArtworkDetail = () => {
               </SectionReveal>
             )}
 
-            <SectionReveal delay={0.4}>
-              <div className="pt-4">
-                <Link to="/contact">
-                  <Button variant="hero" size="lg" className="w-full sm:w-auto">
+            <SectionReveal delay={0.4} className="mt-auto">
+              <div className="pt-4 sm:pt-6">
+                <Link to="/contact" className="block w-full sm:w-auto">
+                  <Button variant="hero" size="lg" className="w-full">
                     Inquire About This Work
                   </Button>
                 </Link>

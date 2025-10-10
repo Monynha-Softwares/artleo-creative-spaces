@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { JsonValue } from "@/types/json";
 
 interface Setting {
   key: string;
-  value: any;
+  value: JsonValue;
   description?: string;
 }
 
@@ -36,8 +37,8 @@ export const useSettings = (key?: string) => {
   });
 };
 
-export const useSiteSetting = (key: string, fallback: any = null) => {
+export const useSiteSetting = (key: string, fallback: JsonValue | null = null) => {
   const { data } = useSettings(key);
   if (Array.isArray(data)) return fallback;
-  return data?.value ?? fallback;
+  return (data?.value ?? fallback) ?? null;
 };
