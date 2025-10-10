@@ -1,12 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 
-interface PageContent {
-  title: string;
-  content: any;
-  meta_title?: string;
-  meta_description?: string;
-}
+type PageContent = Tables<"pages">;
 
 export const usePages = (slug?: string) => {
   return useQuery({

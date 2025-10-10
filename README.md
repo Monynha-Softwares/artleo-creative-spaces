@@ -59,6 +59,16 @@ npm run lint
 
 Linting ensures TypeScript, React, and accessibility conventions stay consistent.
 
+### Troubleshooting
+
+- If the CLI prints `npm warn Unknown env config "http-proxy"`, clear any inherited proxy variables before running the scripts:
+
+  ```bash
+  unset NPM_CONFIG_HTTP_PROXY NPM_CONFIG_HTTPS_PROXY
+  ```
+
+  The project itself does not configure a proxy; the warning stems from globally exported environment variables.
+
 ## Project structure
 
 ```
