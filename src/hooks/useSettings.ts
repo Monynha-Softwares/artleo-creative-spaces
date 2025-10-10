@@ -1,17 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/types";
 
 interface Setting {
   key: string;
-  value: Json;
-  description?: string | null;
+  value: any;
+  description?: string;
 }
 
-type SettingsQueryResult = Setting[] | (Setting | null);
-
 export const useSettings = (key?: string) => {
-  return useQuery<SettingsQueryResult>({
+  return useQuery({
     queryKey: ["settings", key],
     queryFn: async () => {
       if (!key) {
@@ -39,13 +36,8 @@ export const useSettings = (key?: string) => {
   });
 };
 
-export const useSiteSetting = <T = Json | null>(key: string, fallback?: T) => {
+export const useSiteSetting = (key: string, fallback: any = null) => {
   const { data } = useSettings(key);
-
-  if (!data || Array.isArray(data)) {
-    return (fallback ?? null) as T;
-  }
-
-  const value = data.value as unknown;
-  return (value ?? fallback ?? null) as T;
+  if (Array.isArray(data)) return fallback;
+  return data?.value ?? fallback;
 };
