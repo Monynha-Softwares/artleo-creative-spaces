@@ -1,7 +1,4 @@
-import { expect } from "vitest";
-import * as matchers from "@testing-library/jest-dom/matchers";
-
-expect.extend(matchers);
+import "@testing-library/jest-dom/vitest";
 
 // Polyfill matchMedia for components that rely on it
 if (typeof window !== "undefined" && typeof window.matchMedia !== "function") {
