@@ -17,6 +17,10 @@ interface FlowingMenuProps {
   className?: string;
   menuLabel?: string;
   itemRole?: React.AriaRole;
+  authAction?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 const animationDefaults: gsap.TweenVars = { duration: 0.6, ease: "expo" };
@@ -139,8 +143,15 @@ const MenuItem: React.FC<MenuItemProps> = ({ href, label, accent, isActive, redu
 };
 
 export const FlowingMenu = React.forwardRef<HTMLDivElement, FlowingMenuProps>(
-  ({ items, activeHref, onItemClick, className, menuLabel = "Mobile navigation", itemRole = "menuitem" }, ref) => {
+  ({ items, activeHref, onItemClick, className, menuLabel = "Mobile navigation", itemRole = "menuitem", authAction }, ref) => {
   const reduceMotion = useReducedMotion();
+
+  const handleAuthClick = () => {
+    if (authAction?.onClick) {
+      authAction.onClick();
+      onItemClick?.();
+    }
+  };
 
   return (
     <div ref={ref} className={cn("w-full overflow-hidden", className)}>
@@ -160,6 +171,17 @@ export const FlowingMenu = React.forwardRef<HTMLDivElement, FlowingMenuProps>(
             role={itemRole}
           />
         ))}
+        {authAction && (
+          <div className="group relative flex-1 overflow-hidden bg-surface-0 text-center shadow-inset transition-colors border-t border-border/60">
+            <button
+              onClick={handleAuthClick}
+              className="flex h-full min-h-[64px] w-full items-center justify-center px-6 py-4 text-lg font-semibold uppercase transition-colors text-foreground/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              role={itemRole}
+            >
+              {authAction.label}
+            </button>
+          </div>
+        )}
       </nav>
     </div>
   );

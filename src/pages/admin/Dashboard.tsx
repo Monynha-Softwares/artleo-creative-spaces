@@ -91,18 +91,18 @@ const Dashboard = () => {
 
         <Card className="mt-8">
           <CardHeader>
-            <CardTitle>Quick Access</CardTitle>
+            <CardTitle>Backend Access</CardTitle>
             <CardDescription>
-              Need to edit content directly? Access the backend dashboard
+              Need advanced database operations or direct table editing?
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              For advanced database operations and direct table editing, open the Supabase dashboard in a new tab.
+              Access your backend dashboard for advanced operations, database management, authentication settings, and more.
             </p>
-            <Button asChild variant="outline">
-              <a href="https://app.supabase.com/" target="_blank" rel="noopener noreferrer">Open Supabase Dashboard</a>
-            </Button>
+            <p className="text-xs text-muted-foreground/60 mb-4">
+              This will open the Lovable Cloud backend interface where you can manage your database tables, authentication, storage, and edge functions.
+            </p>
           </CardContent>
         </Card>
       </div>

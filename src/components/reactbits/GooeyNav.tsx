@@ -267,12 +267,20 @@ export const GooeyNav = () => {
                   Art Leo navigation
                 </div>
                 <FlowingMenu
-                  items={links}
+                  items={[
+                    ...links,
+                    ...(user
+                      ? isAdmin
+                        ? [{ href: "/admin", label: "Admin", accent: "linear-gradient(135deg, rgba(99, 102, 241, 0.7), rgba(168, 85, 247, 0.7))" }]
+                        : []
+                      : [{ href: "/auth", label: "Login", accent: "linear-gradient(135deg, rgba(99, 102, 241, 0.7), rgba(168, 85, 247, 0.7))" }]),
+                  ]}
                   activeHref={location.pathname}
                   onItemClick={closeMenu}
                   className="shadow-[0_20px_60px_rgba(15,23,42,0.45)]"
                   menuLabel="Mobile navigation"
                   itemRole="menuitem"
+                  authAction={user ? { label: "Logout", onClick: signOut } : undefined}
                 />
                 <div className="flex justify-end bg-surface-1/95 px-6 pb-4 pt-3">
                   <Button
