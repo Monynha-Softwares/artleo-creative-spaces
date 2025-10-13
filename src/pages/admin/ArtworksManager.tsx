@@ -33,6 +33,8 @@ const ArtworksManager = () => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingArtwork, setEditingArtwork] = useState<Artwork | null>(null);
+  const [selectedArtworks, setSelectedArtworks] = useState<string[]>([]);
+  const [filterStatus, setFilterStatus] = useState<string>("all");
 
   const { data: artworks, isLoading: artworksLoading } = useQuery({
     queryKey: ["admin-artworks"],
@@ -54,12 +56,60 @@ const ArtworksManager = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-artworks"] });
+      setSelectedArtworks([]);
       toast.success("Artwork deleted successfully");
     },
     onError: () => {
       toast.error("Failed to delete artwork");
     },
   });
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase.from("artworks").delete().in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-artworks"] });
+      setSelectedArtworks([]);
+      toast.success("Artworks deleted successfully");
+    },
+    onError: () => {
+      toast.error("Failed to delete artworks");
+    },
+  });
+
+  const bulkUpdateStatusMutation = useMutation({
+    mutationFn: async ({ ids, status }: { ids: string[]; status: string }) => {
+      const { error } = await supabase
+        .from("artworks")
+        .update({ status })
+        .in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-artworks"] });
+      setSelectedArtworks([]);
+      toast.success("Artworks updated successfully");
+    },
+    onError: () => {
+      toast.error("Failed to update artworks");
+    },
+  });
+
+  const toggleSelection = (id: string) => {
+    setSelectedArtworks((prev) =>
+      prev.includes(id) ? prev.filter((artId) => artId !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedArtworks.length === artworks?.length) {
+      setSelectedArtworks([]);
+    } else {
+      setSelectedArtworks(artworks?.map((a) => a.id) || []);
+    }
+  };
 
   if (isLoading || artworksLoading) {
     return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
@@ -103,38 +153,91 @@ const ArtworksManager = () => {
           </Dialog>
         </div>
 
+        {/* Select All Checkbox */}
+        {artworks && artworks.length > 0 && (
+          <div className="mb-4 flex items-center gap-2">
+            <Checkbox
+              checked={selectedArtworks.length === artworks.length}
+              onCheckedChange={toggleSelectAll}
+              id="select-all"
+            />
+            <label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
+              Select All
+            </label>
+          </div>
+        )}
+
         <div className="grid gap-4">
           {artworks?.map((artwork) => (
-            <Card key={artwork.id}>
+            <Card key={artwork.id} className="hover:shadow-md transition-shadow">
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle>{artwork.title}</CardTitle>
-                    <div className="mt-2 flex gap-2 text-sm text-muted-foreground">
-                      <span>{artwork.category}</span>
-                      {artwork.year && <span>• {artwork.year}</span>}
-                      <span>• {artwork.status}</span>
-                      {artwork.featured && <span>• Featured</span>}
+                <div className="flex items-start gap-4">
+                  <Checkbox
+                    checked={selectedArtworks.includes(artwork.id)}
+                    onCheckedChange={() => toggleSelection(artwork.id)}
+                    className="mt-1"
+                  />
+                  {artwork.cover_url && (
+                    <img
+                      src={artwork.cover_url}
+                      alt={artwork.title}
+                      className="w-24 h-24 object-cover rounded-lg"
+                    />
+                  )}
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          {artwork.title}
+                          {artwork.featured && <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />}
+                        </CardTitle>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <Badge variant="secondary">{artwork.category}</Badge>
+                          {artwork.year && <Badge variant="outline">{artwork.year}</Badge>}
+                          <Badge 
+                            variant={
+                              artwork.status === "published" ? "default" :
+                              artwork.status === "draft" ? "secondary" : "outline"
+                            }
+                          >
+                            {artwork.status}
+                          </Badge>
+                          {artwork.tags?.map((tag) => (
+                            <Badge key={tag} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                        {artwork.description && (
+                          <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+                            {artwork.description}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingArtwork(artwork);
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => {
+                            if (confirm("Delete this artwork?")) {
+                              deleteMutation.mutate(artwork.id);
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setEditingArtwork(artwork);
-                        setIsDialogOpen(true);
-                      }}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => deleteMutation.mutate(artwork.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               </CardHeader>
