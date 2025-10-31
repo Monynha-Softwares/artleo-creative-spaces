@@ -4,6 +4,7 @@ import { SectionReveal } from "@/components/SectionReveal";
 import { ArrowLeft, Calendar, Tag, Layers } from "lucide-react";
 import { useArtwork } from "@/hooks/useArtwork";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GlassIcon } from "@/components/reactbits/GlassIcon";
 
 const ArtworkDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -89,30 +90,27 @@ const ArtworkDetail = () => {
             <SectionReveal delay={0.2}>
               <div className="space-y-4">
                 {artwork.year && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Calendar className="w-5 h-5 text-primary" />
-                    <span className="text-[clamp(0.95rem,3.2vw,1.1rem)]">
-                      <strong className="text-foreground">Year:</strong> {artwork.year}
-                    </span>
-                  </div>
+                  <GlassIcon
+                    icon={<Calendar className="w-6 h-6" />}
+                    title="Year"
+                    description={artwork.year.toString()}
+                  />
                 )}
 
                 {artwork.category && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Tag className="w-5 h-5 text-primary" />
-                    <span className="text-[clamp(0.95rem,3.2vw,1.1rem)]">
-                      <strong className="text-foreground">Category:</strong> {artwork.category}
-                    </span>
-                  </div>
+                  <GlassIcon
+                    icon={<Tag className="w-6 h-6" />}
+                    title="Category"
+                    description={artwork.category}
+                  />
                 )}
 
                 {artwork.technique && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Layers className="w-5 h-5 text-primary" />
-                    <span className="text-[clamp(0.95rem,3.2vw,1.1rem)]">
-                      <strong className="text-foreground">Technique:</strong> {artwork.technique}
-                    </span>
-                  </div>
+                  <GlassIcon
+                    icon={<Layers className="w-6 h-6" />}
+                    title="Technique"
+                    description={artwork.technique}
+                  />
                 )}
               </div>
             </SectionReveal>
