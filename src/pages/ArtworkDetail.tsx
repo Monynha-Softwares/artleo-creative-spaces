@@ -93,7 +93,7 @@ const ArtworkDetail = () => {
                   <GlassIcon
                     icon={<Calendar className="w-6 h-6" />}
                     title="Year"
-                    description={artwork.year.toString()}
+                    description={String(artwork.year)}
                   />
                 )}
 

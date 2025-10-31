@@ -322,7 +322,7 @@ All React Bits components in this project include:
    - Semantic HTML structure
 
 4. **Color Contrast**
-   - Meets WCAA AA standards
+   - Meets WCAG AA standards
    - Text readable against animated backgrounds
    - Focus states clearly visible
 
